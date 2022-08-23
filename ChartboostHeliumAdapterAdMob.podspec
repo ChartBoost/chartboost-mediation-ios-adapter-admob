@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name        = 'ChartboostHeliumAdapterAdMob'
-  spec.version     = '4.1.0.0.0'
+  spec.version     = '4.9.1.0.0'
   spec.license     = { :type => 'MIT', :file => 'LICENSE.md' }
   spec.homepage    = 'https://github.com/ChartBoost/helium-ios-adapter-admob'
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
 
   # Source
   spec.module_name  = 'HeliumAdapterAdMob'
-  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => '1.0.0' }
+  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => '4.9.1.0.0' }
   spec.source_files = 'Source/**/*.{h,m,swift}'
 
   # Minimum supported versions
@@ -22,7 +22,6 @@ Pod::Spec.new do |spec|
   # This adapter compatible with all Helium 4.X versions of the SDK.
   spec.dependency 'ChartboostHelium', '~> 4.0'
 
-  # Replace this with the partner network SDK and version that this adapter is
-  # certified to work with.
-  #spec.dependency 'PartnerNetworkSDK', '1.0.0' 
+  # Partner network SDK and version that this adapter is certified to work with.
+  spec.dependency 'Google-Mobile-Ads-SDK', '9.1.0' 
 end
