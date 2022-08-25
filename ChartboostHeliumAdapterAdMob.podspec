@@ -9,8 +9,8 @@ Pod::Spec.new do |spec|
 
   # Source
   spec.module_name  = 'HeliumAdapterAdMob'
-  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => '4.9.1.0.0' }
-  spec.source_files = 'Source/**/*.{h,m,swift}'
+  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => '#{spec.version}' }
+  spec.source_files = 'Source/**/*.{swift}'
 
   # Minimum supported versions
   spec.swift_version         = '5.0'
@@ -19,7 +19,7 @@ Pod::Spec.new do |spec|
   # System frameworks used
   spec.ios.frameworks = ['Foundation', 'UIKit']
   
-  # This adapter compatible with all Helium 4.X versions of the SDK.
+  # This adapter is compatible with all Helium 4.X versions of the SDK.
   spec.dependency 'ChartboostHelium', '~> 4.0'
 
   # Partner network SDK and version that this adapter is certified to work with.
