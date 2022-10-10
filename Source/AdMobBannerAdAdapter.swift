@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import HeliumSdk
 import GoogleMobileAds
+import HeliumSdk
 
 class AdMobBannerAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     
-    // The AdMob Ad Object
-    internal var ad: GADBannerView?
+    /// The AdMob Ad Object
+    var ad: GADBannerView?
     
     /// A PartnerAd object with a placeholder (nil) ad object.
     private lazy var partnerAd = PartnerAd(ad: ad, details: [:], request: request)

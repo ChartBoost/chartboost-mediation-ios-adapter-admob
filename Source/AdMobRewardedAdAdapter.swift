@@ -6,14 +6,13 @@
 //
 
 import Foundation
-import HeliumSdk
 import GoogleMobileAds
+import HeliumSdk
 
 class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     
-    
     // The AdMob Ad Object
-    internal var ad: GADRewardedAd?
+    var ad: GADRewardedAd?
     
     /// A PartnerAd object with a placeholder (nil) ad object.
     private lazy var partnerAd = PartnerAd(ad: ad, details: [:], request: request)
@@ -39,7 +38,6 @@ class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
 
             self.ad = ad
             ad?.fullScreenContentDelegate = self
-            self.partnerAd = PartnerAd(ad: self.ad, details: [:], request: self.request)
             completion(.success(self.partnerAd))
         }
     }
@@ -73,7 +71,6 @@ class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
             }
         }
     }
-
 }
 
 extension AdMobRewardedAdAdapter: GADFullScreenContentDelegate {
@@ -102,6 +99,4 @@ extension AdMobRewardedAdAdapter: GADFullScreenContentDelegate {
         log(.didDismiss(partnerAd, error: nil))
         partnerAdDelegate?.didDismiss(partnerAd, error: nil)
     }
-    
-    
 }

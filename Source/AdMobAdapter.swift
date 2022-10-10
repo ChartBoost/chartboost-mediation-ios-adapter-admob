@@ -8,7 +8,6 @@
 import Foundation
 import GoogleMobileAds
 import HeliumSdk
-//import UIKit //TODO: remove, or uncomment if this was load-bearing
 
 
 final class AdMobAdapter: NSObject, ModularPartnerAdapter {

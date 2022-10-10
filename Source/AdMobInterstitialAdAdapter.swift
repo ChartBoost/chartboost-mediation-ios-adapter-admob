@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import HeliumSdk
 import GoogleMobileAds
+import HeliumSdk
 
 class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     
     // The AdMob Ad Object
-    internal var ad: GADInterstitialAd?
+    var ad: GADInterstitialAd?
     
     /// A PartnerAd object with a placeholder (nil) ad object.
     private lazy var partnerAd = PartnerAd(ad: ad, details: [:], request: request)
@@ -37,7 +37,6 @@ class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
             }
             self.ad = ad
             ad?.fullScreenContentDelegate = self
-            self.partnerAd = PartnerAd(ad: self.ad, details: [:], request: self.request)
             completion(.success(self.partnerAd))
         }
     }
@@ -58,7 +57,6 @@ class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
             ad.present(fromRootViewController: viewController)
         }
     }
-
 }
 
 extension AdMobInterstitialAdAdapter: GADFullScreenContentDelegate {
@@ -87,5 +85,4 @@ extension AdMobInterstitialAdAdapter: GADFullScreenContentDelegate {
         log(.didDismiss(partnerAd, error: nil))
         partnerAdDelegate?.didDismiss(partnerAd, error: nil)
     }
-    
 }

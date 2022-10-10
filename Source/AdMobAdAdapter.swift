@@ -6,28 +6,28 @@
 //
 
 import Foundation
-import HeliumSdk
 import GoogleMobileAds
+import HeliumSdk
 
 class AdMobAdAdapter: NSObject {
-    
+
     /// The associated partner adapter.
-    internal let adapter: PartnerAdapter
+    let adapter: PartnerAdapter
     
     /// The ad request containing data relevant to this ad
-    internal let request: PartnerAdLoadRequest
+    let request: PartnerAdLoadRequest
     
     /// The partner ad delegate to send ad life-cycle events to.
-    internal weak var partnerAdDelegate: PartnerAdDelegate?
+    weak var partnerAdDelegate: PartnerAdDelegate?
     
     /// The completion for the ongoing load operation.
-    internal var loadCompletion: ((Result<PartnerAd, Error>) -> Void)?
+    var loadCompletion: ((Result<PartnerAd, Error>) -> Void)?
     
     /// The completion for the ongoing show operation.
-    internal var showCompletion: ((Result<PartnerAd, Error>) -> Void)?
+    var showCompletion: ((Result<PartnerAd, Error>) -> Void)?
     
     /// Pointer to 'extras' that should be included in all ad requests
-    internal let sharedExtras: GADExtras
+    let sharedExtras: GADExtras
     
     required init(adapter: PartnerAdapter,
                   request: PartnerAdLoadRequest,
@@ -38,7 +38,6 @@ class AdMobAdAdapter: NSObject {
         self.partnerAdDelegate = partnerAdDelegate
         self.sharedExtras = extras
     }
-
 }
 
 
