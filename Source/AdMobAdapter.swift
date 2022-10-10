@@ -4,29 +4,39 @@
 //
 //  Created by Alex Rice on 9/16/22.
 //
+
 import Foundation
-import HeliumSdk
-import UIKit
 import GoogleMobileAds
+import HeliumSdk
+//import UIKit //TODO: remove, or uncomment if this was load-bearing
 
 
 final class AdMobAdapter: NSObject, ModularPartnerAdapter {
-
+    
+    /// The version of the partner SDK, e.g. "5.13.2"
     let partnerSDKVersion = GADMobileAds.sharedInstance().sdkVersion
-    let adapterVersion = "4.\(GADMobileAds.sharedInstance().sdkVersion).0"  //TODO: check that this works, and also consider that it may be overly-clever and I should just hard-code the value
+    
+    /// The first number is Helium SDK's major version. The next 3 numbers are the partner SDK version. The last number is the build version of the adapter.
+    let adapterVersion = "4.9.1.0.0"
+    
+    /// The partner's identifier.
     var partnerIdentifier = "admob"
+    
+    /// The partner's name in a human-friendly version.
     var partnerDisplayName = "Google Mobile Ads"
     
+    /// Created ad adapter instances, keyed by the request identifier.
+    /// You should not generally need to modify this property in your adapter implementation, since it is managed by the
+    /// `ModularPartnerAdapter` itself on its default implementation for `PartnerAdapter` load, show and invalidate methods.
     var adAdapters: [String : PartnerAdAdapter] = [:]
 
-    
-    // In the objc adapter, _isSubjectToGDPR was initialized to NO.
-    private var gdprApplies: Bool = false  // TODO: is this the correct default?
+    private var gdprApplies: Bool?
     private var gdprStatus: GDPRConsentStatus = .unknown
-    // Additional parameters to send with the ad request
+    
+    /// Additional parameters to send with the ad request
     var extras = GADExtras()
     
-    ///
+    /// Google's identifier for your test device can be found in the console output from their SDK
     class func setTestDeviceId(_ id: String) {
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ id ]
     }
@@ -37,9 +47,9 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     ///   - completion: Handler to notify Helium of task completion.
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
-        // Note that this constant is the name of a Google class, not our adapter class name
-        let adMobClassName = "GADMobileAds"
         
+        // Note that this string is the name of a Google class, not our adapter class name
+        let adMobClassName = "GADMobileAds"
         GADMobileAds.sharedInstance().start { initStatus in
             let statuses = initStatus.adapterStatusesByClassName
             if statuses[adMobClassName]?.state == .ready {
@@ -81,11 +91,24 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     }
     
     private func updateGDPRConsent() {
-        if gdprApplies && gdprStatus != .granted{
-            // Specifying non-personalized ads as described at https://developers.google.com/admob/ump/ios/quick-start#forward-consent
-            
-            // Set key "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
+        // If we haven't received consent, we don't assume it's granted.
+        // If gdprApplies is .unknown, we play it safe because it might apply.
+        // If the user consents to tracking, we allow tracking in all cases.
+        // If GDPR doesn't apply, it doesn't matter whether the user consents.
+        //           Y N ?
+        // .granted  _ _ _
+        // .denied   X _ X
+        // .unknown  X _ X
+        
+        // Non-personalized ads are specified by the presense of the key "npa" set to "1" https://developers.google.com/admob/ump/ios/quick-start#forward-consent
+        // Allow personalized ads if the user consents or gdprApplies has been set to false
+        if (gdprApplies ?? true) == false || gdprStatus == .granted {
+            extras.additionalParameters?["npa"] = nil
+            log(.privacyUpdated(setting: "npa", value: "nil"))
+        } else {
+            // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
             extras.additionalParameters = (extras.additionalParameters ?? [:]).merging(["npa":"1"], uniquingKeysWith: { (_, new) in new })
+            log(.privacyUpdated(setting: "npa", value: "1"))
         }
     }
     
@@ -98,5 +121,4 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     func setUserSubjectToCOPPA(_ isSubject: Bool) {
         GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: isSubject)
     }
-
 }
