@@ -6,6 +6,7 @@ Pod::Spec.new do |spec|
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
   spec.summary     = 'Helium iOS SDK Google AdMob adapter.'
   spec.description = 'Google AdMob Adapters for mediating through Helium. Supported ad formats: Banner, Interstitial, and Rewarded.'
+  spec.static_framework = true
 
   # Source
   spec.module_name  = 'HeliumAdapterAdMob'
