@@ -92,7 +92,8 @@ extension AdMobRewardedAdAdapter: GADFullScreenContentDelegate {
     
     // Google has deprecated adDidPresentFullScreenContent and says to use this delegate method instead
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        // TODO: ???
+        showCompletion?(.success(partnerAd)) ?? log(.showResultIgnored)
+//        showCompletion = nil
     }
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
