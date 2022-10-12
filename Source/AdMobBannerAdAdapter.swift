@@ -14,6 +14,9 @@ class AdMobBannerAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     /// The AdMob Ad Object
     var ad: GADBannerView?
     
+    /// The completion for the ongoing load operation.
+    var loadCompletion: ((Result<PartnerAd, Error>) -> Void)?
+    
     /// A PartnerAd object with a placeholder (nil) ad object.
     private lazy var partnerAd = PartnerAd(ad: ad, details: [:], request: request)
     
@@ -28,6 +31,7 @@ class AdMobBannerAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
         guard viewController != nil else {
             let error = error(.noViewController)
             log(.loadFailed(request, error: error))
+            completion(.failure(error))
             return
         }
 
@@ -39,13 +43,13 @@ class AdMobBannerAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
 
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.ad = GADBannerView(adSize: GADAdSizeBanner)
+            let size = self.gadAdSizeFrom(cgSize: self.request.size)
+            self.ad = GADBannerView(adSize: size)
             self.ad?.adUnitID = placementID
             self.ad?.isAutoloadEnabled = false
             self.ad?.delegate = self
             self.ad?.rootViewController = viewController
             self.ad?.load(adMobRequest)
-            completion(.success(self.partnerAd))
         }
     }
     
@@ -56,13 +60,27 @@ class AdMobBannerAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     func show(with viewController: UIViewController, completion: @escaping (Result<HeliumSdk.PartnerAd, Error>) -> Void) {
         // Banner ads do not require a show() method, but this stub is needed for conformance to PartnerAdAdapter
     }
+    
+    func gadAdSizeFrom(cgSize: CGSize?) -> GADAdSize {
+        guard let size = cgSize else { return GADAdSizeInvalid }
+        switch (size.width, size.height) {
+        case (320, 50):
+            return GADAdSizeBanner
+        case (300, 250):
+            return GADAdSizeMediumRectangle
+        case (728, 90):
+            return GADAdSizeLeaderboard
+        default:
+            return GADAdSizeInvalid
+        }
+    }
 }
 
 extension AdMobBannerAdAdapter: GADBannerViewDelegate {
 
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         // Report load success
-        loadCompletion?(.success(partnerAd))
+        loadCompletion?(.success(partnerAd)) ?? log(.loadResultIgnored)
     }
 
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
@@ -73,14 +91,10 @@ extension AdMobBannerAdAdapter: GADBannerViewDelegate {
     }
 
     func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
-        self.partnerAdDelegate?.didTrackImpression(self.partnerAd)
+        self.partnerAdDelegate?.didTrackImpression(self.partnerAd) ?? log(.delegateUnavailable)
     }
 
     func bannerViewDidRecordClick(_ bannerView: GADBannerView) {
-        self.partnerAdDelegate?.didClick(self.partnerAd)
-    }
-
-    func bannerViewDidDismissScreen(_ bannerView: GADBannerView) {
-        self.partnerAdDelegate?.didDismiss(self.partnerAd, error: nil)
+        self.partnerAdDelegate?.didClick(self.partnerAd) ?? log(.delegateUnavailable)
     }
 }

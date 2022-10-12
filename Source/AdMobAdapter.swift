@@ -12,7 +12,7 @@ import HeliumSdk
 
 final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     
-    /// The version of the partner SDK, e.g. "5.13.2"
+    /// The semantic version number of the partner SDK
     let partnerSDKVersion = GADMobileAds.sharedInstance().sdkVersion
     
     /// The first number is Helium SDK's major version. The next 3 numbers are the partner SDK version. The last number is the build version of the adapter.
@@ -22,7 +22,7 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     var partnerIdentifier = "admob"
     
     /// The partner's name in a human-friendly version.
-    var partnerDisplayName = "Google Mobile Ads"
+    var partnerDisplayName = "AdMob"
     
     /// Created ad adapter instances, keyed by the request identifier.
     /// You should not generally need to modify this property in your adapter implementation, since it is managed by the
@@ -47,6 +47,9 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
         
+        // Disable Google mediation since Helium is the mediator
+        GADMobileAds.sharedInstance().disableMediationInitialization()
+
         // Note that this string is the name of a Google class, not our adapter class name
         let adMobClassName = "GADMobileAds"
         GADMobileAds.sharedInstance().start { initStatus in
@@ -58,6 +61,7 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
                 let error = self.error(.setUpFailure,
                                        description: "AdMob adapter status was \(String(describing: statuses[adMobClassName]?.state))")
                 self.log(.setUpFailed(error))
+                completion(error)
             }
         }
     }
@@ -101,7 +105,7 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
         
         // Non-personalized ads are specified by the presense of the key "npa" set to "1" https://developers.google.com/admob/ump/ios/quick-start#forward-consent
         // Allow personalized ads if the user consents or gdprApplies has been set to false
-        if (gdprApplies ?? true) == false || gdprStatus == .granted {
+        if gdprApplies == false || gdprStatus == .granted {
             extras.additionalParameters?["npa"] = nil
             log(.privacyUpdated(setting: "npa", value: "nil"))
         } else {
@@ -114,10 +118,13 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     func setCCPAConsent(hasGivenConsent: Bool, privacyString: String?) {
         // https://developers.google.com/admob/ios/ccpa#rdp_signal_2
         // Invert the boolean, because "has given consent" is the opposite of "needs Restricted Data Processing"
+        log(.privacyUpdated(setting: "gap_rdp", value: !hasGivenConsent))
         UserDefaults.standard.set(!hasGivenConsent, forKey: "gad_rdp")
     }
     
     func setUserSubjectToCOPPA(_ isSubject: Bool) {
+        log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isSubject))
         GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: isSubject)
     }
+
 }

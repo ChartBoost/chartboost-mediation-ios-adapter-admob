@@ -20,9 +20,6 @@ class AdMobAdAdapter: NSObject {
     /// The partner ad delegate to send ad life-cycle events to.
     weak var partnerAdDelegate: PartnerAdDelegate?
     
-    /// The completion for the ongoing load operation.
-    var loadCompletion: ((Result<PartnerAd, Error>) -> Void)?
-    
     /// The completion for the ongoing show operation.
     var showCompletion: ((Result<PartnerAd, Error>) -> Void)?
     

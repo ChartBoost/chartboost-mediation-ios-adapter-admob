@@ -6,7 +6,6 @@ Pod::Spec.new do |spec|
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
   spec.summary     = 'Helium iOS SDK Google AdMob adapter.'
   spec.description = 'Google AdMob Adapters for mediating through Helium. Supported ad formats: Banner, Interstitial, and Rewarded.'
-  spec.static_framework = true
 
   # Source
   spec.module_name  = 'HeliumAdapterAdMob'
@@ -24,5 +23,9 @@ Pod::Spec.new do |spec|
   spec.dependency 'ChartboostHelium', '~> 4.0'
 
   # Partner network SDK and version that this adapter is certified to work with.
-  spec.dependency 'Google-Mobile-Ads-SDK', '9.1.0' 
+  spec.dependency 'Google-Mobile-Ads-SDK', '9.1.0'
+  
+  # The partner network SDK is a static framework which requires the static_framework option.
+  spec.static_framework = true
+  
 end

@@ -22,8 +22,6 @@ class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
     /// - parameter completion: Closure to be performed once the ad has been loaded.
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        loadCompletion = completion
-        
         let adMobRequest = GADRequest()
         adMobRequest.requestAgent = "Helium"
         adMobRequest.register(sharedExtras)
@@ -34,6 +32,7 @@ class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
             if let error = error {
                 self.log(.loadFailed(self.request, error: error))
                 completion(.failure(error))
+                return
             }
 
             self.ad = ad
@@ -47,27 +46,25 @@ class AdMobRewardedAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     /// - parameter viewController: The view controller on which the ad will be presented on.
     /// - parameter completion: Closure to be performed once the ad has been shown.
     func show(with viewController: UIViewController, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        guard let ad = partnerAd.ad as? GADRewardedAd else {
-            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not an GADRewardedAd.")
+        guard let ad = ad else {
+            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not a GADRewardedAd.")
             log(.showFailed(partnerAd, error: error))
             return
         }
+        showCompletion = completion
 
         DispatchQueue.main.async {
             ad.present(fromRootViewController: viewController) { [weak self] in
                 guard let self = self else { return }
-                // The documentation makes it sound like this completion is only called when the user
-                // has earned a reward, so .adReward should be populated, but lets check anyway
-                guard let gadAdReward = (self.partnerAd.ad as? GADRewardedAd)?.adReward else {
-                    self.log("AdMob reward was unexpectedly nil")
+                guard let gadAdReward = self.ad?.adReward else {
+                    self.log("self.ad was unexpectedly nil")
                     return
                 }
                 
-                // TODO: probably want to update the adapter API to accept decimals
                 let amount = Int(truncating: gadAdReward.amount)
                 let reward = Reward(amount: amount, label: gadAdReward.type)
 
-                self.partnerAdDelegate?.didReward(self.partnerAd, reward: reward)
+                self.partnerAdDelegate?.didReward(self.partnerAd, reward: reward) ?? self.log(.delegateUnavailable)
             }
         }
     }
@@ -77,27 +74,27 @@ extension AdMobRewardedAdAdapter: GADFullScreenContentDelegate {
     
     func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
         log(.didTrackImpression(partnerAd))
-        partnerAdDelegate?.didTrackImpression(partnerAd)
+        partnerAdDelegate?.didTrackImpression(partnerAd) ?? log(.delegateUnavailable)
     }
     
     func adDidRecordClick(_ ad: GADFullScreenPresentingAd) {
         log(.didClick(partnerAd, error: nil))
-        partnerAdDelegate?.didClick(partnerAd)
+        partnerAdDelegate?.didClick(partnerAd) ?? log(.delegateUnavailable)
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        loadCompletion?(.failure(self.error(.showFailure(partnerAd), description: error.localizedDescription)))
-            ?? log(.loadResultIgnored)
+        showCompletion?(.failure(self.error(.showFailure(partnerAd), description: error.localizedDescription)))
+            ?? log(.showResultIgnored)
     }
     
     // Google has deprecated adDidPresentFullScreenContent and says to use this delegate method instead
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         showCompletion?(.success(partnerAd)) ?? log(.showResultIgnored)
-//        showCompletion = nil
+        showCompletion = nil
     }
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         log(.didDismiss(partnerAd, error: nil))
-        partnerAdDelegate?.didDismiss(partnerAd, error: nil)
+        partnerAdDelegate?.didDismiss(partnerAd, error: nil) ?? log(.delegateUnavailable)
     }
 }

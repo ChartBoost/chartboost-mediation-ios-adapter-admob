@@ -22,8 +22,6 @@ class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
     /// - parameter completion: Closure to be performed once the ad has been loaded.
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        loadCompletion = completion
-        
         let adMobRequest = GADRequest()
         adMobRequest.requestAgent = "Helium"
         adMobRequest.register(self.sharedExtras)
@@ -34,6 +32,7 @@ class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
             if let error = error {
                 self.log(.loadFailed(self.request, error: error))
                 completion(.failure(error))
+                return
             }
             self.ad = ad
             ad?.fullScreenContentDelegate = self
@@ -46,12 +45,12 @@ class AdMobInterstitialAdAdapter: AdMobAdAdapter, PartnerAdAdapter {
     /// - parameter viewController: The view controller on which the ad will be presented on.
     /// - parameter completion: Closure to be performed once the ad has been shown.
     func show(with viewController: UIViewController, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        showCompletion = completion
-        guard let ad = partnerAd.ad as? GADInterstitialAd else {
-            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not an GADInterstitialAd.")
+        guard let ad = ad else {
+            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not a GADInterstitialAd.")
             log(.showFailed(partnerAd, error: error))
             return
         }
+        showCompletion = completion
         
         DispatchQueue.main.async {
             ad.present(fromRootViewController: viewController)
@@ -63,27 +62,28 @@ extension AdMobInterstitialAdAdapter: GADFullScreenContentDelegate {
     
     func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
         log(.didTrackImpression(partnerAd))
-        partnerAdDelegate?.didTrackImpression(partnerAd)
+        partnerAdDelegate?.didTrackImpression(partnerAd) ?? log(.delegateUnavailable)
     }
     
     func adDidRecordClick(_ ad: GADFullScreenPresentingAd) {
         log(.didClick(partnerAd, error: nil))
-        partnerAdDelegate?.didClick(partnerAd)
+        partnerAdDelegate?.didClick(partnerAd) ?? log(.delegateUnavailable)
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        loadCompletion?(.failure(self.error(.showFailure(partnerAd), description: error.localizedDescription)))
-            ?? log(.loadResultIgnored)
+        showCompletion?(.failure(self.error(.showFailure(partnerAd), error: error)))
+                    ?? log(.showResultIgnored)
+        showCompletion = nil
     }
     
     // Google has deprecated adDidPresentFullScreenContent and says to use this delegate method instead
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         showCompletion?(.success(partnerAd)) ?? log(.showResultIgnored)
-//        showCompletion = nil
+        showCompletion = nil
     }
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         log(.didDismiss(partnerAd, error: nil))
-        partnerAdDelegate?.didDismiss(partnerAd, error: nil)
+        partnerAdDelegate?.didDismiss(partnerAd, error: nil) ?? log(.delegateUnavailable)
     }
 }
