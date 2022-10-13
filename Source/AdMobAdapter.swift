@@ -35,11 +35,6 @@ final class AdMobAdapter: NSObject, ModularPartnerAdapter {
     /// Additional parameters to send with the ad request
     var extras = GADExtras()
     
-    /// Google's identifier for your test device can be found in the console output from their SDK
-    class func setTestDeviceId(_ id: String) {
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ id ]
-    }
-    
     /// Initialize the AdMob SDK so that it's ready to request and display ads.
     /// - Parameters:
     ///   - configuration: The necessary initialization data provided by Helium.
