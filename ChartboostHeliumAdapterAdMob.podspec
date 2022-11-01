@@ -24,4 +24,8 @@ Pod::Spec.new do |spec|
 
   # Partner network SDK and version that this adapter is certified to work with.
   spec.dependency 'Google-Mobile-Ads-SDK', '9.1.0' 
+
+  # The partner network SDK is a static framework which requires the static_framework option.
+  spec.static_framework = true
+
 end
