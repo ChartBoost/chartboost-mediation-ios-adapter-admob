@@ -60,7 +60,7 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
         DispatchQueue.main.async {
             ad.present(fromRootViewController: viewController) { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.didReward(self, details: [:])
+                self.delegate?.didReward(self, details: [:])  ?? self.log(.delegateUnavailable)
             }
         }
     }

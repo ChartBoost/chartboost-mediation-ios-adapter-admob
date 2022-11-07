@@ -21,12 +21,12 @@ enum Constants {
 final class AdMobAdapter: PartnerAdapter {
     
     /// The version of the partner SDK.
-    let partnerSDKVersion = "9.1.0"
+    let partnerSDKVersion = "9.12.0"
     
     /// The version of the adapter.
     /// It should have 6 digits separated by periods, where the first digit is Helium SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `"<Helium major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>"`.
-    var adapterVersion = "4.9.1.0.0.0"
+    var adapterVersion = "4.9.12.0.0.0"
     
     /// The partner's unique identifier.
     var partnerIdentifier = "admob"
@@ -82,9 +82,8 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter request: Information about the ad load request.
     /// - parameter completion: Closure to be performed with the fetched info.
     func fetchBidderInformation(request: PreBidRequest, completion: @escaping ([String: String]?) -> Void) {
-        log(.fetchBidderInfoStarted(request))
-        log(.fetchBidderInfoSucceeded(request))
-        completion([:])
+        // AdMob does not use a bidding token
+        completion(nil)
     }
     
     /// Indicates if GDPR applies or not and the user's GDPR consent status.
