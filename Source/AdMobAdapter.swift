@@ -60,6 +60,7 @@ final class AdMobAdapter: PartnerAdapter {
             log("Redundant call to initalize GoogleMobileAds was ignored")
             // We should log either success or failure before returning, and this is more like success.
             log(.setUpSucceded)
+            completion(nil)
             return
         }
 
