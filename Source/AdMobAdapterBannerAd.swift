@@ -10,14 +10,13 @@ import GoogleMobileAds
 import HeliumSdk
 
 class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
-    
     /// The partner ad view to display inline. E.g. a banner view.
     /// Should be nil for full-screen ads.
     var inlineView: UIView?
-    
+
     // The AdMob Ad Object
     var ad: GADBannerView?
-    
+
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
     /// - parameter completion: Closure to be performed once the ad has been loaded.
@@ -33,17 +32,16 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
         }
         
         let adMobRequest = generateRequest()
-        
         let placementID = request.partnerPlacement
 
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            let size = self.gadAdSizeFrom(cgSize: self.request.size)
-            self.ad = GADBannerView(adSize: size)
-            self.ad?.adUnitID = placementID
-            self.ad?.isAutoloadEnabled = false
-            self.ad?.delegate = self
-            self.ad?.rootViewController = viewController
+            let bannerView = GADBannerView(adSize: self.gadAdSizeFrom(cgSize: self.request.size))
+            bannerView.adUnitID = placementID
+            bannerView.isAutoloadEnabled = false
+            bannerView.delegate = self
+            bannerView.rootViewController = viewController
+            self.ad = bannerView
             self.ad?.load(adMobRequest)
         }
     }
@@ -58,15 +56,15 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
     
     func gadAdSizeFrom(cgSize: CGSize?) -> GADAdSize {
         guard let size = cgSize else { return GADAdSizeInvalid }
-        switch (size.width, size.height) {
-        case (320, 50):
+        switch size.height {
+        case 50..<90:
             return GADAdSizeBanner
-        case (300, 250):
-            return GADAdSizeMediumRectangle
-        case (728, 90):
+        case 90..<250:
             return GADAdSizeLeaderboard
+        case 250...:
+            return GADAdSizeMediumRectangle
         default:
-            return GADAdSizeInvalid
+            return GADAdSizeBanner
         }
     }
 }
@@ -77,11 +75,13 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         log(.loadSucceeded)
         self.inlineView = bannerView
         loadCompletion?(.success([:])) ?? log(.loadResultIgnored)
+        loadCompletion = nil
     }
 
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
         // Report load failure
         let error = self.error(.loadFailure)
+        log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }

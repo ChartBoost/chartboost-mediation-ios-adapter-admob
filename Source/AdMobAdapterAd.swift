@@ -45,16 +45,16 @@ class AdMobAdapterAd: NSObject {
         let adMobRequest = GADRequest()
         adMobRequest.requestAgent = "Helium"
         
-        var parameters: [String : String] = [:]
+        var parameters: [String : Any] = [:]
         // The 3.x code uses [NSString boolValue] to interpret the value of is_hybrid_setup, and mirroring
         // that is probably the best way to get consistent results as the upstream code is evolving
-        if let isHybrid = (request.partnerSettings[Constants.isHybridKey] as? NSString)?.boolValue,
+        if let isHybrid = (request.partnerSettings[GoogleStrings.isHybridKey] as? NSString)?.boolValue,
             isHybrid == true {
-            parameters[Constants.isHybridKey] = "true"
+            parameters[GoogleStrings.isHybridKey] = true
             
             // IFF we received the "is hybrid" flag set to True, we should also include the
             // request identifier, as per HB-4131
-            parameters[Constants.reqId] = request.identifier
+            parameters[GoogleStrings.reqIdKey] = request.identifier
         }
         
         // Generate the extras payload

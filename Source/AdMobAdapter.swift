@@ -9,17 +9,16 @@ import Foundation
 import GoogleMobileAds
 import HeliumSdk
 
-enum Constants {
-    // Note that this string is the name of a Google class, not our adapter class name
+// Magic Strings that shouldn't be changed because they're defined by Google, not Helium.
+enum GoogleStrings {
+    static let ccpaKey = "gap_rdp"
     static let adMobClassName = "GADMobileAds"
-    // A Google-specified dictionary key, also used as a key for that value when stored locally
+    static let gdprKey = "npa"
     static let isHybridKey = "is_hybrid_setup"
-    // A Google-specified dictionary key
-    static let reqId = "placement_request_id"
+    static let reqIdKey = "placement_request_id"
 }
 
 final class AdMobAdapter: PartnerAdapter {
-    
     /// The version of the partner SDK.
     let partnerSDKVersion = "9.12.0"
     
@@ -51,27 +50,27 @@ final class AdMobAdapter: PartnerAdapter {
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
 
+        // Disable Google mediation since Helium is the mediator
+        GADMobileAds.sharedInstance().disableMediationInitialization()
+
         // Exit early if GoogleMobileAds SDK has already been initalized
         let statuses = GADMobileAds.sharedInstance().initializationStatus
-        guard let status = statuses.adapterStatusesByClassName[Constants.adMobClassName],
+        guard let status = statuses.adapterStatusesByClassName[GoogleStrings.adMobClassName],
                   status.state == GADAdapterInitializationState.notReady else {
             log("Redundant call to initalize GoogleMobileAds was ignored")
             // We should log either success or failure before returning, and this is more like success.
             log(.setUpSucceded)
             return
         }
-        
-        // Disable Google mediation since Helium is the mediator
-        GADMobileAds.sharedInstance().disableMediationInitialization()
-        
+
         GADMobileAds.sharedInstance().start { initStatus in
             let statuses = initStatus.adapterStatusesByClassName
-            if statuses[Constants.adMobClassName]?.state == .ready {
+            if statuses[GoogleStrings.adMobClassName]?.state == .ready {
                 self.log(.setUpSucceded)
                 completion(nil)
             } else {
                 let error = self.error(.setUpFailure,
-                                       description: "AdMob adapter status was \(String(describing: statuses[Constants.adMobClassName]?.state))")
+                                       description: "AdMob adapter status was \(String(describing: statuses[GoogleStrings.adMobClassName]?.state))")
                 self.log(.setUpFailed(error))
                 completion(error)
             }
@@ -92,12 +91,12 @@ final class AdMobAdapter: PartnerAdapter {
     func setGDPR(applies: Bool?, status: GDPRConsentStatus) {
         if applies == true && status != .granted {
             // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
-            sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging(["npa":"1"], uniquingKeysWith: { (_, new) in new })
-            log(.privacyUpdated(setting: "npa", value: "1"))
+            sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging([GoogleStrings.gdprKey:"1"], uniquingKeysWith: { (_, new) in new })
+            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: "1"))
         } else {
             // If GDPR doesn't apply or status is '.granted', then remove the "non-personalized ads" flag
-            sharedExtras.additionalParameters?["npa"] = nil
-            log(.privacyUpdated(setting: "npa", value: "nil"))
+            sharedExtras.additionalParameters?[GoogleStrings.gdprKey] = nil
+            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: "nil"))
         }
     }
     
@@ -107,8 +106,8 @@ final class AdMobAdapter: PartnerAdapter {
     func setCCPA(hasGivenConsent: Bool, privacyString: String) {
         // https://developers.google.com/admob/ios/ccpa#rdp_signal_2
         // Invert the boolean, because "has given consent" is the opposite of "needs Restricted Data Processing"
-        log(.privacyUpdated(setting: "gap_rdp", value: !hasGivenConsent))
-        UserDefaults.standard.set(!hasGivenConsent, forKey: "gad_rdp")
+        log(.privacyUpdated(setting: GoogleStrings.ccpaKey, value: !hasGivenConsent))
+        UserDefaults.standard.set(!hasGivenConsent, forKey: GoogleStrings.ccpaKey)
     }
     
     /// Indicates if the user is subject to COPPA or not.
@@ -138,5 +137,4 @@ final class AdMobAdapter: PartnerAdapter {
             return AdMobAdapterRewardedAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         }
     }
-    
 }

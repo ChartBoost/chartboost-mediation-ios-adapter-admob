@@ -10,11 +10,9 @@ import GoogleMobileAds
 import HeliumSdk
 
 final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
-    
     /// The partner ad view to display inline. E.g. a banner view.
     /// Should be nil for full-screen ads.
     var inlineView: UIView? { nil }
-    
     
     // The AdMob Ad Object
     var ad: GADRewardedAd?
@@ -25,20 +23,18 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
         log(.loadStarted)
         
-        DispatchQueue.main.async { [self] in
-            let adMobRequest = generateRequest()
-            GADRewardedAd.load(withAdUnitID:self.request.partnerPlacement,
-                                    request: adMobRequest) { [weak self] ad, error in
-                guard let self = self else { return }
-                if let error = error {
-                    self.log(.loadFailed(error))
-                    completion(.failure(error))
-                    return
-                }
-                self.ad = ad
-                ad?.fullScreenContentDelegate = self
-                completion(.success([:]))
+        let adMobRequest = generateRequest()
+        GADRewardedAd.load(withAdUnitID:self.request.partnerPlacement,
+                                request: adMobRequest) { [weak self] ad, error in
+            guard let self = self else { return }
+            if let error = error {
+                self.log(.loadFailed(error))
+                completion(.failure(error))
+                return
             }
+            self.ad = ad
+            ad?.fullScreenContentDelegate = self
+            completion(.success([:]))
         }
     }
     
@@ -60,6 +56,7 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
         DispatchQueue.main.async {
             ad.present(fromRootViewController: viewController) { [weak self] in
                 guard let self = self else { return }
+                self.log(.didReward)
                 self.delegate?.didReward(self, details: [:])  ?? self.log(.delegateUnavailable)
             }
         }
@@ -79,8 +76,7 @@ extension AdMobAdapterRewardedAd: GADFullScreenContentDelegate {
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        let err = self.error(.showFailure, error: error)
-        log(.showFailed(err))
+        log(.showFailed(self.error(.showFailure, error: error)))
         showCompletion?(.failure(error)) ?? log(.showResultIgnored)
         showCompletion = nil
     }

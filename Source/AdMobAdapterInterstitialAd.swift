@@ -10,11 +10,9 @@ import GoogleMobileAds
 import HeliumSdk
 
 final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerAd {
-    
     /// The partner ad view to display inline. E.g. a banner view.
     /// Should be nil for full-screen ads.
     var inlineView: UIView? { nil }
-    
     
     // The AdMob Ad Object
     var ad: GADInterstitialAd?
@@ -74,8 +72,7 @@ extension AdMobAdapterInterstitialAd: GADFullScreenContentDelegate {
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        let err = self.error(.showFailure, error: error)
-        log(.showFailed(err))
+        log(.showFailed(self.error(.showFailure, error: error)))
         showCompletion?(.failure(error)) ?? log(.showResultIgnored)
         showCompletion = nil
     }
