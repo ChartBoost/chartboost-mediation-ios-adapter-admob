@@ -34,6 +34,7 @@ final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerAd {
             }
             self.ad = ad
             ad?.fullScreenContentDelegate = self
+            self.log(.loadSucceeded)
             completion(.success([:]))
         }
     }
@@ -79,6 +80,7 @@ extension AdMobAdapterInterstitialAd: GADFullScreenContentDelegate {
     
     // Google has deprecated adDidPresentFullScreenContent and says to use this delegate method instead
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        log(.showSucceeded)
         showCompletion?(.success([:])) ?? log(.showResultIgnored)
         showCompletion = nil
     }

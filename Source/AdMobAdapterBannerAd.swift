@@ -12,10 +12,20 @@ import HeliumSdk
 class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
     /// The partner ad view to display inline. E.g. a banner view.
     /// Should be nil for full-screen ads.
-    var inlineView: UIView?
+    var inlineView: UIView? {
+        return self.ad
+    }
 
     // The AdMob Ad Object
     var ad: GADBannerView?
+
+    override init(adapter: PartnerAdapter,
+                  request: PartnerAdLoadRequest,
+                  delegate: PartnerAdDelegate,
+                  extras: GADExtras) {
+        super.init(adapter: adapter, request: request, delegate: delegate, extras: extras)
+        ad = GADBannerView(adSize: gadAdSizeFrom(cgSize: request.size))
+    }
 
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
@@ -36,12 +46,11 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
 
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            let bannerView = GADBannerView(adSize: self.gadAdSizeFrom(cgSize: self.request.size))
-            bannerView.adUnitID = placementID
-            bannerView.isAutoloadEnabled = false
-            bannerView.delegate = self
-            bannerView.rootViewController = viewController
-            self.ad = bannerView
+
+            self.ad?.adUnitID = placementID
+            self.ad?.isAutoloadEnabled = false
+            self.ad?.delegate = self
+            self.ad?.rootViewController = viewController
             self.ad?.load(adMobRequest)
         }
     }
@@ -54,8 +63,9 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
         // no-op
     }
     
-    func gadAdSizeFrom(cgSize: CGSize?) -> GADAdSize {
+    private func gadAdSizeFrom(cgSize: CGSize?) -> GADAdSize {
         guard let size = cgSize else { return GADAdSizeInvalid }
+
         switch size.height {
         case 50..<90:
             return GADAdSizeBanner
@@ -73,13 +83,11 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
 
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         log(.loadSucceeded)
-        self.inlineView = bannerView
         loadCompletion?(.success([:])) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
-        // Report load failure
         let error = self.error(.loadFailure)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)

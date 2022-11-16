@@ -25,7 +25,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// The version of the adapter.
     /// It should have 6 digits separated by periods, where the first digit is Helium SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `"<Helium major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>"`.
-    var adapterVersion = "4.9.12.0.0.0"
+    var adapterVersion = "4.9.12.0.0"
     
     /// The partner's unique identifier.
     var partnerIdentifier = "admob"
@@ -97,7 +97,7 @@ final class AdMobAdapter: PartnerAdapter {
         } else {
             // If GDPR doesn't apply or status is '.granted', then remove the "non-personalized ads" flag
             sharedExtras.additionalParameters?[GoogleStrings.gdprKey] = nil
-            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: "nil"))
+            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: nil))
         }
     }
     
@@ -126,9 +126,6 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter request: Information about the ad load request.
     /// - parameter delegate: The delegate that will receive ad life-cycle notifications.
     func makeAd(request: PartnerAdLoadRequest, delegate: PartnerAdDelegate) throws -> PartnerAd {
-        // Here you must create a PartnerAd object and return it or throw an error.
-        // You'll have to define your custom type that conforms to PartnerAd. Depending on how you organize your code you may have one single PartnerAdapter type, or multiple ones depending on ad format.
-        
         switch request.format {
         case .banner:
             return AdMobAdapterBannerAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
