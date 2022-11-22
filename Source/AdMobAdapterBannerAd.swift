@@ -19,18 +19,11 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
     // The AdMob Ad Object
     var ad: GADBannerView?
 
-    override init(adapter: PartnerAdapter,
-                  request: PartnerAdLoadRequest,
-                  delegate: PartnerAdDelegate,
-                  extras: GADExtras) {
-        super.init(adapter: adapter, request: request, delegate: delegate, extras: extras)
-        ad = GADBannerView(adSize: gadAdSizeFrom(cgSize: request.size))
-    }
-
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
     /// - parameter completion: Closure to be performed once the ad has been loaded.
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
+        log(.loadStarted)
         loadCompletion = completion
 
         // Banner ads auto-show after loading, so we must have a ViewController
@@ -47,11 +40,13 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
 
-            self.ad?.adUnitID = placementID
-            self.ad?.isAutoloadEnabled = false
-            self.ad?.delegate = self
-            self.ad?.rootViewController = viewController
-            self.ad?.load(adMobRequest)
+            let bannerView = GADBannerView(adSize: self.gadAdSizeFrom(cgSize: self.request.size))
+            bannerView.adUnitID = placementID
+            bannerView.isAutoloadEnabled = false
+            bannerView.delegate = self
+            bannerView.rootViewController = viewController
+            self.ad = bannerView
+            bannerView.load(adMobRequest)
         }
     }
     
