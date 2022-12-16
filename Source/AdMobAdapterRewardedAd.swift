@@ -54,12 +54,10 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
         }
         showCompletion = completion
         
-        DispatchQueue.main.async {
-            ad.present(fromRootViewController: viewController) { [weak self] in
-                guard let self = self else { return }
-                self.log(.didReward)
-                self.delegate?.didReward(self, details: [:])  ?? self.log(.delegateUnavailable)
-            }
+        ad.present(fromRootViewController: viewController) { [weak self] in
+            guard let self = self else { return }
+            self.log(.didReward)
+            self.delegate?.didReward(self, details: [:])  ?? self.log(.delegateUnavailable)
         }
     }
 }

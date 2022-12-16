@@ -54,9 +54,7 @@ final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerAd {
         }
         showCompletion = completion
         
-        DispatchQueue.main.async {
-            ad.present(fromRootViewController: viewController)
-        }
+        ad.present(fromRootViewController: viewController)
     }
 }
 
