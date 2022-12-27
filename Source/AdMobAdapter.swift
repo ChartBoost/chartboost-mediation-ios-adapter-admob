@@ -70,7 +70,7 @@ final class AdMobAdapter: PartnerAdapter {
                 self.log(.setUpSucceded)
                 completion(nil)
             } else {
-                let error = self.error(.setUpFailure,
+                let error = self.error(.initializationFailurePartnerNotIntegrated,
                                        description: "AdMob adapter status was \(String(describing: statuses[GoogleStrings.adMobClassName]?.state))")
                 self.log(.setUpFailed(error))
                 completion(error)
@@ -134,7 +134,7 @@ final class AdMobAdapter: PartnerAdapter {
         case .rewarded:
             return AdMobAdapterRewardedAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         @unknown default:
-            throw error(.adFormatNotSupported(request))
+            throw error(.loadFailureUnsupportedAdFormat)
         }
     }
 }

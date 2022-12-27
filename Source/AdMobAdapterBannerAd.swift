@@ -23,7 +23,7 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
 
         // Banner ads auto-show after loading, so we must have a ViewController
         guard viewController != nil else {
-            let error = error(.noViewController)
+            let error = error(.showFailureViewControllerNotFound)
             log(.loadFailed(error))
             completion(.failure(error))
             return
@@ -73,7 +73,7 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
     }
 
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
-        let error = self.error(.loadFailure)
+        let error = self.error(.loadFailureException, error: error)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil
