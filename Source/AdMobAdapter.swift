@@ -70,7 +70,7 @@ final class AdMobAdapter: PartnerAdapter {
                 self.log(.setUpSucceded)
                 completion(nil)
             } else {
-                let error = self.error(.initializationFailurePartnerNotIntegrated,
+                let error = self.error(.initializationFailureUnknown,
                                        description: "AdMob adapter status was \(String(describing: statuses[GoogleStrings.adMobClassName]?.state))")
                 self.log(.setUpFailed(error))
                 completion(error)
