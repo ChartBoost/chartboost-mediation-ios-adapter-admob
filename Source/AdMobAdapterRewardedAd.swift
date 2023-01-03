@@ -47,7 +47,7 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
         log(.showStarted)
         
         guard let ad = ad else {
-            let error = error(.noAdReadyToShow)
+            let error = error(.showFailureAdNotReady)
             log(.showFailed(error))
             completion(.failure(error))
             return
@@ -75,7 +75,7 @@ extension AdMobAdapterRewardedAd: GADFullScreenContentDelegate {
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        log(.showFailed(self.error(.showFailure, error: error)))
+        log(.showFailed(self.error(.showFailureUnknown, error: error)))
         showCompletion?(.failure(error)) ?? log(.showResultIgnored)
         showCompletion = nil
     }
