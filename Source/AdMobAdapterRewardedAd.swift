@@ -75,7 +75,7 @@ extension AdMobAdapterRewardedAd: GADFullScreenContentDelegate {
     }
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        log(.showFailed(self.error(.showFailureException, error: error)))
+        log(.showFailed(self.error(.showFailureUnknown, error: error)))
         showCompletion?(.failure(error)) ?? log(.showResultIgnored)
         showCompletion = nil
     }
