@@ -79,6 +79,7 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
     }
 
     func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
+        log(.didTrackImpression)
         self.delegate?.didTrackImpression(self, details: [:]) ?? log(.delegateUnavailable)
     }
 
