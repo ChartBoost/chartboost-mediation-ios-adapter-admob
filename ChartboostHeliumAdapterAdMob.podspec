@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
 
   # Source
   spec.module_name  = 'HeliumAdapterAdMob'
-  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => '#{spec.version}' }
+  spec.source       = { :git => 'https://github.com/ChartBoost/helium-ios-adapter-admob.git', :tag => spec.version }
   spec.source_files = 'Source/**/*.{swift}'
 
   # Minimum supported versions
