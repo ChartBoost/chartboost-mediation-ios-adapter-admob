@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.ios.frameworks = ['Foundation', 'UIKit']
   
   # This adapter is compatible with all Chartboost Mediation 4.X versions of the SDK.
-  spec.dependency 'ChartboostMediation', '~> 4.0'
+  spec.dependency 'ChartboostMediationSDK', '~> 4.0'
 
   # Partner network SDK and version that this adapter is certified to work with.
   spec.dependency 'Google-Mobile-Ads-SDK', '9.12.0'
