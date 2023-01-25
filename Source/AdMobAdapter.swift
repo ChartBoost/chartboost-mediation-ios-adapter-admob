@@ -10,9 +10,9 @@
 // Created by Alex Rice on 10/01/22
 //
 
+import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
-import HeliumSdk
 
 // Magic Strings that shouldn't be changed because they're defined by Google, not Helium.
 enum GoogleStrings {

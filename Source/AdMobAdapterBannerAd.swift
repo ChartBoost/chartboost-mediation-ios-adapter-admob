@@ -10,9 +10,9 @@
 // Created by Alex Rice on 10/02/22
 //
 
+import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
-import HeliumSdk
 
 class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
     /// The partner ad view to display inline. E.g. a banner view.
