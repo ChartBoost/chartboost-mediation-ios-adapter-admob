@@ -1,6 +1,6 @@
 # Chartboost Mediation AdMob Adapter
 
-The Chartboost Mediation AdMob adapter mediates the AdMob SDK into the Chartboost Mediation SDK.
+The Chartboost Mediation AdMob adapter mediates AdMob via the Chartboost Mediation SDK.
 
 ## Minimum Requirements
 
