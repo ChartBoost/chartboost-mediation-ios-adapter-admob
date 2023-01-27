@@ -5,7 +5,7 @@
 
 //
 // AdMobAdapter.swift
-// AdMobAdapter
+// ChartboostMediationAdapterAdMob
 //
 // Created by Alex Rice on 10/01/22
 //
@@ -14,7 +14,7 @@ import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
 
-// Magic Strings that shouldn't be changed because they're defined by Google, not Helium.
+// Magic Strings that shouldn't be changed because they're defined by Google, not Chartboost Mediation.
 enum GoogleStrings {
     static let ccpaKey = "gap_rdp"
     static let adMobClassName = "GADMobileAds"
@@ -28,8 +28,8 @@ final class AdMobAdapter: PartnerAdapter {
     lazy var partnerSDKVersion = getGADVersionString()
     
     /// The version of the adapter.
-    /// It should have either 5 or 6 digits separated by periods, where the first digit is Helium SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
-    /// Format: `<Helium major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
+    /// It should have either 5 or 6 digits separated by periods, where the first digit is Chartboost Mediation SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
+    /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
     var adapterVersion = "4.9.12.0.0"
     
     /// The partner's unique identifier.
@@ -42,8 +42,8 @@ final class AdMobAdapter: PartnerAdapter {
     let sharedExtras = GADExtras()
     
     /// The designated initializer for the adapter.
-    /// Helium SDK will use this constructor to create instances of conforming types.
-    /// - parameter storage: An object that exposes storage managed by the Helium SDK to the adapter.
+    /// Chartboost Mediation SDK will use this constructor to create instances of conforming types.
+    /// - parameter storage: An object that exposes storage managed by the Chartboost Mediation SDK to the adapter.
     /// It includes a list of created `PartnerAd` instances. You may ignore this parameter if you don't need it.
     init(storage: PartnerAdapterStorage) {
         // no-op
@@ -55,7 +55,7 @@ final class AdMobAdapter: PartnerAdapter {
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
 
-        // Disable Google mediation since Helium is the mediator
+        // Disable Google mediation since Chartboost Mediation is the mediator
         GADMobileAds.sharedInstance().disableMediationInitialization()
 
         // Exit early if GoogleMobileAds SDK has already been initalized
@@ -124,8 +124,8 @@ final class AdMobAdapter: PartnerAdapter {
     }
     
     /// Creates a new ad object in charge of communicating with a single partner SDK ad instance.
-    /// Helium SDK calls this method to create a new ad for each new load request. Ad instances are never reused.
-    /// Helium SDK takes care of storing and disposing of ad instances so you don't need to.
+    /// Chartboost Mediation SDK calls this method to create a new ad for each new load request. Ad instances are never reused.
+    /// Chartboost Mediation SDK takes care of storing and disposing of ad instances so you don't need to.
     /// `invalidate()` is called on ads before disposing of them in case partners need to perform any custom logic before the object gets destroyed.
     /// If, for some reason, a new ad cannot be provided, an error should be thrown.
     /// - parameter request: Information about the ad load request.

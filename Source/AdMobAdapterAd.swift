@@ -5,7 +5,7 @@
 
 //
 // AdMobAdapterAd.swift
-// AdMobAdapter
+// ChartboostMediationAdapterAdMob
 //
 // Created by Alex Rice on 10/02/22
 //

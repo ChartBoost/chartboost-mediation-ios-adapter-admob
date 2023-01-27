@@ -5,7 +5,7 @@
 
 //
 //  AdMobAdapterConfiguration.swift
-//  AdMobAdapter
+//  ChartboostMediationAdapterAdMob
 //
 //  Created by Alex Rice on 10/11/22.
 //
