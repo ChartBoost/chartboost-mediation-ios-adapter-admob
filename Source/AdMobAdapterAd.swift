@@ -48,7 +48,7 @@ class AdMobAdapterAd: NSObject {
     /// Configure the request object that will be sent to AdMob
     func generateRequest() -> GADRequest {
         let adMobRequest = GADRequest()
-        adMobRequest.requestAgent = "Helium"
+        adMobRequest.requestAgent = "Chartboost"
         
         var parameters: [String: Any] = [:]
         if let isHybrid = request.partnerSettings[GoogleStrings.isHybridKey] as? Bool,
