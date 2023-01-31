@@ -209,7 +209,7 @@ final class AdMobAdapter: PartnerAdapter {
         case .codeInternal:
             return .showFailureUnknown
         case .codeAdAlreadyUsed:
-            return .showFailureAdNotReady
+            return .showFailureUnknown
         case .notMainThread:
             return .showFailureException
         case .mediation:
