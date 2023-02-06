@@ -135,6 +135,82 @@ final class AdMobAdapter: PartnerAdapter {
             throw error(.loadFailureUnsupportedAdFormat)
         }
     }
+    
+    /// Maps a partner load error to a Helium error code.
+    /// Helium SDK calls this method when a load completion is called with a partner error.
+    ///
+    /// A default implementation is provided that returns `nil`.
+    /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Helium's.
+    /// If some case cannot be mapped return `nil` to let Helium choose a default error code.
+    func mapLoadError(_ error: Error) -> HeliumError.Code? {
+        guard (error as NSError).domain == GADErrorDomain,
+              let code = GADErrorCode(rawValue: (error as NSError).code) else {
+            return nil
+        }
+        switch code {
+        case .invalidRequest:
+            return .loadFailureInvalidAdRequest
+        case .noFill:
+            return .loadFailureNoFill
+        case .networkError:
+            return .loadFailureNetworkingError
+        case .serverError:
+            return .loadFailureServerError
+        case .osVersionTooLow:
+            return .loadFailureOSVersionNotSupported
+        case .timeout:
+            return .loadFailureTimeout
+        case .mediationDataError:
+            return .loadFailureUnknown
+        case .mediationAdapterError:
+            return .loadFailureUnknown
+        case .mediationInvalidAdSize:
+            return .loadFailureInvalidBannerSize
+        case .internalError:
+            return .loadFailureUnknown
+        case .invalidArgument:
+            return .loadFailureUnknown
+        case .receivedInvalidResponse:
+            return .loadFailureInvalidBidResponse
+        case .mediationNoFill:
+            return .loadFailureNoFill
+        case .adAlreadyUsed:
+            return .loadFailureLoadInProgress
+        case .applicationIdentifierMissing:
+            return .loadFailureInvalidCredentials
+        @unknown default:
+            return nil
+        }
+    }
+    
+    /// Maps a partner show error to a Helium error code.
+    /// Helium SDK calls this method when a show completion is called with a partner error.
+    ///
+    /// A default implementation is provided that returns `nil`.
+    /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Helium's.
+    /// If some case cannot be mapped return `nil` to let Helium choose a default error code.
+    func mapShowError(_ error: Error) -> HeliumError.Code? {
+        guard (error as NSError).domain == GADErrorDomain,
+              let code = GADPresentationErrorCode(rawValue: (error as NSError).code) else {
+            return nil
+        }
+        switch code {
+        case .codeAdNotReady:
+            return .showFailureAdNotReady
+        case .codeAdTooLarge:
+            return .showFailureUnsupportedAdSize
+        case .codeInternal:
+            return .showFailureUnknown
+        case .codeAdAlreadyUsed:
+            return .showFailureUnknown
+        case .notMainThread:
+            return .showFailureException
+        case .mediation:
+            return .showFailureUnknown
+        @unknown default:
+            return nil
+        }
+    }
 }
 
 func getGADVersionString() -> String {
