@@ -1,0 +1,39 @@
+name: Release Candidate
+
+on:
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUBSERVICETOKEN }}
+
+jobs:
+  release-adapter:
+    runs-on: macos-latest
+    steps:
+      # Check out the repo.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Generate the next RC version.
+      - name: Generate Release Candidate Version
+        id: release_version
+        run: echo "version=$(ruby ./Scripts/next-rc-version.rb)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # Push the RC tag.
+      - name: Tag
+        run: git tag ${{ steps.release_version.outputs.version }} && git push origin ${{ steps.release_version.outputs.version }}
+        shell: bash
+
+      # Trigger RC build for internal testing.
+      - name: Trigger RC Build
+        if: success()
+        shell: bash
+        run: |
+          curl \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $GITHUB_TOKEN" \
+          https://api.github.com/repos/ChartBoost/ios-helium-sdk/dispatches \
+          -d '{"event_type":"adapter_release_candidate","client_payload":{"adapter_name":"${{ github.event.repository.name }}","tag":"${{ steps.release_version.outputs.version }}"}}'
