@@ -21,6 +21,18 @@ jobs:
         run: echo "version=$(ruby ./Scripts/next-rc-version.rb)" >> $GITHUB_OUTPUT
         shell: bash
 
+      # Add new changelog entry for the current adapter version if missing.
+      - name: Add Changelog Entry
+        id: changelog_entry
+        run: echo "result=$(ruby ./Scripts/add-changelog-entry.rb)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # Push changelog changes if any.
+      - name: Push Changelog Changes
+        if: ${{ steps.changelog_entry.outputs.result == 'added' }}
+        run: git add CHANGELOG.md && git commit -m '[AUTO-GENERATED] Update CHANGELOG.md' && git push
+        shell: bash
+
       # Push the RC tag.
       - name: Tag
         run: git tag ${{ steps.release_version.outputs.version }} && git push origin ${{ steps.release_version.outputs.version }}
