@@ -88,6 +88,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter applies: `true` if GDPR applies, `false` if not, `nil` if the publisher has not provided this information.
     /// - parameter status: One of the `GDPRConsentStatus` values depending on the user's preference.
     func setGDPR(applies: Bool?, status: GDPRConsentStatus) {
+        // The "npa" parameter is an internal AdMob feature not publicly documented, and is subject to change.
         if applies == true && status != .granted {
             // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
             sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging([GoogleStrings.gdprKey:"1"], uniquingKeysWith: { (_, new) in new })
@@ -103,7 +104,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter hasGivenConsent: A boolean indicating if the user has given consent.
     /// - parameter privacyString: An IAB-compliant string indicating the CCPA status.
     func setCCPA(hasGivenConsent: Bool, privacyString: String) {
-        // https://developers.google.com/admob/ios/ccpa#rdp_signal_2
+        // See https://developers.google.com/admob/ios/privacy/ccpa
         // Invert the boolean, because "has given consent" is the opposite of "needs Restricted Data Processing"
         log(.privacyUpdated(setting: GoogleStrings.ccpaKey, value: !hasGivenConsent))
         UserDefaults.standard.set(!hasGivenConsent, forKey: GoogleStrings.ccpaKey)
@@ -112,6 +113,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// Indicates if the user is subject to COPPA or not.
     /// - parameter isChildDirected: `true` if the user is subject to COPPA, `false` otherwise.
     func setCOPPA(isChildDirected: Bool) {
+        // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration#-tagforchilddirectedtreatment:
         log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isChildDirected))
         GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: isChildDirected)
     }
