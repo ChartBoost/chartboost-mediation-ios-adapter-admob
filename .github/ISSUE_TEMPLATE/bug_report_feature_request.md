@@ -35,20 +35,19 @@ _Provide the following information._
  - Partner Network SDK version: [e.g. 1.2.3]
  - Partner Adapter version: [e.g. 4.1.2.3.0]
 
-**Android Environment Details**
+**iOS Environment Details**
 
 _Provide the following information._
- - Android Studio version: [e.g. 2020.3.1]
- - Gradle version: [e.g. 7.1]
- - Android Gradle Plugin version: [e.g. 7.0]
- - Java/Kotlin version: [e.g. Kotlin 1.7.10]
+ - Xcode version: [e.g. 14.2]
+ - CocoaPods version: [e.g. 1.11.3]
+ - Swift version: [e.g. 5.1]
  - Unity Editor version (if this is a Unity build): [e.g. 2022.2.3]
 
 **Device Details**
 
 _Provide the following information._
- - Device: [e.g. Pixel 5]
- - OS: [e.g. Android 11]
+ - Device: [e.g. iPhone 13 Pro]
+ - OS: [e.g. iOS 15.2]
 
 ---
 
