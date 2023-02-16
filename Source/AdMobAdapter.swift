@@ -39,7 +39,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter storage: An object that exposes storage managed by the Chartboost Mediation SDK to the adapter.
     /// It includes a list of created `PartnerAd` instances. You may ignore this parameter if you don't need it.
     init(storage: PartnerAdapterStorage) {
-        // no-op
+        sharedExtras.additionalParameters = ["platform_name": "chartboost"]
     }
     
     /// Does any setup needed before beginning to load ads.
