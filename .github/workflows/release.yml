@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
+
+env:
+  COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+jobs:
+  release-adapter:
+    runs-on: macos-latest
+    steps:
+      # Check out the repo.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Obtain the new adapter version.
+      - name: Obtain Adapter Version
+        id: release_version
+        run: echo "version=$(ruby ./Scripts/adapter-version.rb)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # Push the release tag.
+      - name: Tag
+        run: git tag ${{ steps.release_version.outputs.version }} && git push origin ${{ steps.release_version.outputs.version }}
+        shell: bash
+
+      # Push the podspec.
+      - name: Push Podspec
+        run: pod trunk push --verbose
+
+      # Create GitHub release.
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: ''
+          draft: false
+          prerelease: false
