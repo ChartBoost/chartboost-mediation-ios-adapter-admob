@@ -1,0 +1,26 @@
+name: Smoke Test
+
+on:
+  # On pull requests to main
+  pull_request:
+    branches:
+      - main
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
+
+jobs:
+  validate-podspec:
+    runs-on: macos-latest
+    steps:
+      # Check out the repo.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Check that the adapter version in the podpsec and in the PartnerAdapter Swift implementation are the same.
+      - name: Validate Adapter and Podspec Version Match
+        run: if [ "$(ruby ./Scripts/validate-adapter-version.rb)" != "true" ]; then exit 1; fi
+        shell: bash
+
+      # Validate the podspec.
+      - name: Validate Podspec
+        run: pod lib lint --verbose
