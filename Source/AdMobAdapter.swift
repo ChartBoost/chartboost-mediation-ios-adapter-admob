@@ -17,8 +17,14 @@ enum GoogleStrings {
 }
 
 final class AdMobAdapter: PartnerAdapter {
+    
     /// The version of the partner SDK.
-    lazy var partnerSDKVersion = getGADVersionString()
+    var partnerSDKVersion: String {
+        // GADMobileAds SDK version is formatted like "afma-sdk-i-v9.14.0".
+        // We attempt to retrieve only the semantic version by stripping the prefix.
+        GADMobileAds.sharedInstance().sdkVersion
+            .replacingOccurrences(of: "afma-sdk-i-v", with: "")
+    }
     
     /// The version of the adapter.
     /// It should have either 5 or 6 digits separated by periods, where the first digit is Chartboost Mediation SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
@@ -213,9 +219,4 @@ final class AdMobAdapter: PartnerAdapter {
             return nil
         }
     }
-}
-
-func getGADVersionString() -> String {
-    let gadVersion = GADVersionNumber()
-    return "\(gadVersion.majorVersion).\(gadVersion.minorVersion).\(gadVersion.patchVersion)"
 }
