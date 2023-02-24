@@ -29,13 +29,13 @@ final class AdMobAdapter: PartnerAdapter {
     /// The version of the adapter.
     /// It should have either 5 or 6 digits separated by periods, where the first digit is Chartboost Mediation SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    var adapterVersion = "4.9.12.0.0"
+    let adapterVersion = "4.9.12.0.0"
     
     /// The partner's unique identifier.
-    var partnerIdentifier = "admob"
+    let partnerIdentifier = "admob"
     
     /// The human-friendly partner name.
-    var partnerDisplayName = "AdMob"
+    let partnerDisplayName = "AdMob"
     
     /// Parameters that should be included in all ad requests
     let sharedExtras = GADExtras()
