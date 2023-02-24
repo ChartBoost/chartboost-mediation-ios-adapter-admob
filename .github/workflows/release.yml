@@ -28,7 +28,7 @@ jobs:
 
       # Push the podspec.
       - name: Push Podspec
-        run: pod trunk push --verbose
+        run: pod trunk push --verbose --allow-warnings
 
       # Create GitHub release.
       - name: Create Release
