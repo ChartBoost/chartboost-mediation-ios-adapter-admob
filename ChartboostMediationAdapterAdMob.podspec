@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name        = 'ChartboostMediationAdapterAdMob'
-  spec.version     = '4.9.14.0.0'
+  spec.version     = '4.9.14.0.1'
   spec.license     = { :type => 'MIT', :file => 'LICENSE.md' }
   spec.homepage    = 'https://github.com/ChartBoost/chartboost-mediation-ios-adapter-admob'
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.ios.frameworks = ['Foundation', 'UIKit']
   
   # This adapter is compatible with all Chartboost Mediation 4.X versions of the SDK.
-  spec.dependency 'ChartboostMediationSDK', '~> 4.0'
+  spec.dependency 'ChartboostMediationSDK', '~> 4.2'
 
   # Partner network SDK and version that this adapter is certified to work with.
   spec.dependency 'Google-Mobile-Ads-SDK', '~> 9.14.0'
