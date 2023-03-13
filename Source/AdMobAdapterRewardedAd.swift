@@ -22,8 +22,10 @@ final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
         log(.loadStarted)
         
         let adMobRequest = generateRequest()
-        GADRewardedAd.load(withAdUnitID:self.request.partnerPlacement,
-                                request: adMobRequest) { [weak self] ad, error in
+        GADRewardedAd.load(
+            withAdUnitID:self.request.partnerPlacement,
+            request: adMobRequest
+        ) { [weak self] ad, error in
             guard let self = self else { return }
             if let error = error {
                 self.log(.loadFailed(error))

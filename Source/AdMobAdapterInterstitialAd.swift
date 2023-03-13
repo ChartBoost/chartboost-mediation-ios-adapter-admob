@@ -22,8 +22,10 @@ final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerAd {
         log(.loadStarted)
         
         let adMobRequest = generateRequest()
-        GADInterstitialAd.load(withAdUnitID:self.request.partnerPlacement,
-                                request: adMobRequest) { [weak self] ad, error in
+        GADInterstitialAd.load(
+            withAdUnitID:self.request.partnerPlacement,
+            request: adMobRequest
+        ) { [weak self] ad, error in
             guard let self = self else { return }
             if let error = error {
                 self.log(.loadFailed(error))
