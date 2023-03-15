@@ -139,10 +139,13 @@ final class AdMobAdapter: PartnerAdapter {
             return AdMobAdapterInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         case .rewarded:
             return AdMobAdapterRewardedAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
-        case .rewardedInterstitial:
-            return AdMobAdapterRewardedInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         default:
-            throw error(.loadFailureUnsupportedAdFormat)
+            // Not using the `.rewardedInterstitial` case directly to maintain backward compatibility with Chartboost Mediation 4.0
+            if request.format.rawValue == "rewardedInterstitial" {
+                return AdMobAdapterRewardedInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
+            } else {
+                throw error(.loadFailureUnsupportedAdFormat)
+            }
         }
     }
     
