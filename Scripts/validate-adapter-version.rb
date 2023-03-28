@@ -1,4 +1,4 @@
 require_relative 'common'
 
-# Exit with match result (0 = success, 1 = failure)
-exit podspec_version == adapter_class_version ? 0 : 1
+# Fail if versions in podpsec and in the main adapter class don't match
+abort "Validation failed: #{podspec_version} != #{adapter_class_version}." unless podspec_version == adapter_class_version

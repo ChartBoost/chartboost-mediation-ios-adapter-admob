@@ -8,5 +8,5 @@ PARTNER_VERSION_REGEX = /^(?>~> )?[0-9]+(?>\.[0-9]+){1,}$/
 abort "Missing argument. Requires: version string." unless ARGV.count == 1
 version = ARGV[0]
 
-# Check that the version is a semantic version with an optional CocoaPods optimistic operator.
-exit 1 unless version.match?(PARTNER_VERSION_REGEX)
+# Fail if the version is not a semantic version with an optional CocoaPods optimistic operator.
+abort "Validation failed: #{version} is not well-formed." unless version.match?(PARTNER_VERSION_REGEX)

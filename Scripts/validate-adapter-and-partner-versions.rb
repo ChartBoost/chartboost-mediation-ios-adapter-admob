@@ -11,5 +11,5 @@ partner_digits_in_adapter_version = adapter_version.split('.')[1...-1].join('.')
 # Strip the cocoapods optimistic operation from the partner version if it exists
 partner_version = partner_version.delete_prefix('~> ')
 
-# Exit with match result (0 = success, 1 = failure)
-exit partner_digits_in_adapter_version == partner_version ? 0 : 1
+# Fail if versions don't match
+abort "Validation failed: #{partner_digits_in_adapter_version} != #{partner_version}." unless partner_digits_in_adapter_version == partner_version

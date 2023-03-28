@@ -9,7 +9,7 @@ abort "Missing argument. Requires: version string." unless ARGV.count == 1
 new_version = ARGV[0]
 
 # Check that the version is 5 or 6 digits separated by dots.
-exit 1 unless new_version.match?(ADAPTER_VERSION_REGEX)
+abort "Validation failed: #{new_version} is not a well-formed version." unless new_version.match?(ADAPTER_VERSION_REGEX)
 
 # Check if a tag for that version already exists in the remote
 # This command:
@@ -18,5 +18,5 @@ exit 1 unless new_version.match?(ADAPTER_VERSION_REGEX)
 # 3. Returns the new version string if the corresponding tag was found, empty string otherwise
 version_tag_check = %x( git fetch origin --tags --prune --prune-tags --force && git tag -l "#{new_version}" | head -1)
 
-# Exit with result: 0 (success) if tag not found, 1 (failure) otherwise.
-exit version_tag_check.empty? ? 0 : 1
+# Fail if the tag was found
+abort "Validation failed: #{new_version} tag already exists on the remote." unless version_tag_check.empty?
