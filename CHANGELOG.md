@@ -3,6 +3,9 @@
 Note the first digit of every adapter version corresponds to the major version of the Chartboost Mediation SDK compatible with that adapter. 
 Adapters are compatible with any Chartboost Mediation SDK version within that major version.
 
+### 4.10.3.0.0
+- This version of the adapters has been certified with Google-Mobile-Ads-SDK 10.3.0
+
 ### 4.10.1.0.0
 - This version of the adapters has been certified with Google-Mobile-Ads-SDK 10.1.0
 - Google Mobile Ads SDK will only serve ads on iOS versions >= 12  
