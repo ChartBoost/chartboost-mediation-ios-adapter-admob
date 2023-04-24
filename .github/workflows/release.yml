@@ -15,6 +15,8 @@ jobs:
       # Check out the repo.
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUBSERVICETOKEN }}
 
       # Obtain the new adapter version.
       - name: Obtain Adapter Version
