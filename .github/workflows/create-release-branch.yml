@@ -21,51 +21,7 @@ jobs:
   create-release-branch:
     runs-on: macos-latest
     steps:
-
-      # Check out the repo at the specified branch or tag.
-      - name: Checkout Branch
-        uses: actions/checkout@v3
-
-      # Validate adapter and partner versions are compatible.
-      - name: Validate Adapter and Partner Version Match
-        run: ruby ./Scripts/validate-adapter-and-partner-versions.rb "${{ inputs.adapter-version }}" "${{ inputs.partner-version }}"
-        shell: bash
-
-      # Validate adapter version is well-formed and not already released.
-      - name: Validate Adapter Version
-        run: ruby ./Scripts/validate-new-release-version.rb "${{ inputs.adapter-version }}"
-        shell: bash
-
-      # Validate partner version is well-formed.
-      - name: Validate Partner Version
-        run: ruby ./Scripts/validate-partner-version.rb "${{ inputs.partner-version }}"
-        shell: bash
-
-      # Create and checkout branch
-      - name: Create Branch
-        run: git checkout -b "release/${{ inputs.adapter-version }}"
-        shell: bash
-
-      # Update version strings in podspec.
-      - name: Update Version Strings in Podspec
-        run: ruby ./Scripts/update-podspec-versions.rb "${{ inputs.adapter-version }}" "${{ inputs.partner-version }}"
-        shell: bash
-
-      # Update version string in main adapter class.
-      - name: Update Version String in Partner Adapter Class
-        run: ruby ./Scripts/update-adapter-class-version.rb "${{ inputs.adapter-version }}"
-        shell: bash
-
-      # Add new changelog entry for the current adapter version.
-      - name: Add Changelog Entry
-        run: ruby ./Scripts/add-changelog-entry.rb "${{ inputs.adapter-version }}" "${{ inputs.partner-version }}"
-        shell: bash
-
-      # Commit and push changes.
-      - name: Push Changes
-        run: git add *.podspec CHANGELOG.md Source/*Adapter.swift && git commit -m "[AUTO-GENERATED] Update version to ${{ inputs.adapter-version }}" && git push -u origin "release/${{ inputs.adapter-version }}"
-        shell: bash
-
-      # Open a pull request from the new branch to main.
-      - name: Open Pull Request
-        run: gh pr create --base "main" --reviewer "@ChartBoost/helium-ios" --title "Update Version to ${{ inputs.adapter-version }}" --body "Adapter version '${{ inputs.adapter-version }}', partner version '${{ inputs.partner-version }}'" --label "do not merge"
+      - uses: chartboost/chartboost-mediation-ios-actions/create-adapter-release-branch@v1
+        with:
+          adapter-version: ${{ inputs.adapter-version }}
+          partner-version: ${{ inputs.partner-version }}
