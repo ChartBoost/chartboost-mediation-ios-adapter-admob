@@ -1,0 +1,27 @@
+name: Create Release Branch
+
+on:
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
+    inputs:
+      adapter-version:
+        type: string
+        description: 'Adapter version (e.g. ''4.9.2.0.0'')'
+        required: true
+      partner-version:
+        type: string
+        description: 'Partner version (e.g. ''~> 9.2.0'')'
+        required: true
+        default: '~> '
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUBSERVICETOKEN }}
+
+jobs:
+  create-release-branch:
+    runs-on: macos-latest
+    steps:
+      - uses: chartboost/chartboost-mediation-ios-actions/create-adapter-release-branch@v1
+        with:
+          adapter-version: ${{ inputs.adapter-version }}
+          partner-version: ${{ inputs.partner-version }}
