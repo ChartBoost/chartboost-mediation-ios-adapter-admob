@@ -3,6 +3,9 @@
 Note the first digit of every adapter version corresponds to the major version of the Chartboost Mediation SDK compatible with that adapter. 
 Adapters are compatible with any Chartboost Mediation SDK version within that major version.
 
+### 4.10.6.0.0
+- This version of the adapters has been certified with Google-Mobile-Ads-SDK 10.6.0.
+
 ### 4.10.3.0.1
 - Added support for the Rewarded Interstitial ad format.
 - This version of the adapters has been certified with Google-Mobile-Ads-SDK 10.3.0
