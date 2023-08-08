@@ -20,10 +20,8 @@ final class AdMobAdapter: PartnerAdapter {
     
     /// The version of the partner SDK.
     var partnerSDKVersion: String {
-        // GADMobileAds SDK version is formatted like "afma-sdk-i-v9.14.0".
-        // We attempt to retrieve only the semantic version by stripping the prefix.
-        GADMobileAds.sharedInstance().sdkVersion
-            .replacingOccurrences(of: "afma-sdk-i-v", with: "")
+        let versionNumber = GADMobileAds.sharedInstance().versionNumber
+        return "\(versionNumber.majorVersion).\(versionNumber.minorVersion).\(versionNumber.patchVersion)"
     }
     
     /// The version of the adapter.
@@ -121,7 +119,7 @@ final class AdMobAdapter: PartnerAdapter {
     func setCOPPA(isChildDirected: Bool) {
         // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration#-tagforchilddirectedtreatment:
         log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isChildDirected))
-        GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: isChildDirected)
+        GADMobileAds.sharedInstance().requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isChildDirected)
     }
     
     /// Creates a new ad object in charge of communicating with a single partner SDK ad instance.
