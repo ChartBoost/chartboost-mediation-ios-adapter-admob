@@ -77,12 +77,12 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         // "The exact size of the ad returned is passed through the banner’s ad size delegate and
         // is indicated by the banner’s intrinsicContentSize."
         let loadedSize = bannerView.intrinsicContentSize
-        var partnerDetails: [String: String] = [:]
-        partnerDetails["bannerWidth"] = "\(loadedSize.width)"
-        partnerDetails["bannerHeight"] = "\(loadedSize.height)"
-        // 0 for fixed size banner, 1 for adaptive banner.
-        partnerDetails["bannerType"] = (request.format == .banner ? "0" : "1")
-
+        let partnerDetails = [
+            "bannerWidth": "\(loadedSize.width)",
+            "bannerHeight": "\(loadedSize.height)",
+            // 0 for fixed size banner, 1 for adaptive banner.
+            "bannerType": request.format == .banner ? "0" : "1"
+        ]
         loadCompletion?(.success(partnerDetails)) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
