@@ -8,7 +8,7 @@ The Chartboost Mediation AdMob adapter mediates AdMob via the Chartboost Mediati
 | ------ | ------ |
 | Chartboost Mediation SDK | 4.0.0+ |
 | Cocoapods | 1.11.3+ |
-| iOS | 10.0+ |
+| iOS | 11.0+ |
 | Xcode | 14.1+ |
 
 ## Integration
