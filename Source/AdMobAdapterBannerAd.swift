@@ -80,8 +80,11 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         let partnerDetails = [
             "bannerWidth": "\(loadedSize.width)",
             "bannerHeight": "\(loadedSize.height)",
+            // Determine if this is a fluid size ad or not. If the frame of a non-fluid adaptive ad
+            // is changed by even 1px, it will trigger a reload, so we want to avoid this by
+            // returning fixed in this case.
             // 0 for fixed size banner, 1 for adaptive banner.
-            "bannerType": request.format == .banner ? "0" : "1"
+            "bannerType": GADAdSizeIsFluid(bannerView.adSize) ? "1" : "0"
         ]
         loadCompletion?(.success(partnerDetails)) ?? log(.loadResultIgnored)
         loadCompletion = nil
