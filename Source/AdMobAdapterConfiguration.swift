@@ -10,7 +10,7 @@ import os.log
 /// A list of externally configurable properties pertaining to the partner SDK that can be retrieved and set by publishers.
 @objc public class AdMobAdapterConfiguration: NSObject {
 
-    private static var log = OSLog(subsystem: "com.chartboost.mediation.adapter.admob", category: "Configuration")
+    private static let log = OSLog(subsystem: "com.chartboost.mediation.adapter.admob", category: "Configuration")
 
     /// Google's identifier for your test device can be found in the console output from their SDK
     @objc public static func setTestDeviceID(_ id: String?) {
