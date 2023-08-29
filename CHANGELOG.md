@@ -5,6 +5,7 @@ Adapters are compatible with any Chartboost Mediation SDK version within that ma
 
 ### 4.10.9.0.1
 - Add support for Adaptive Banners.
+- No longer performing console logging on iOS 11.
 - This version of the adapters has been certified with Google-Mobile-Ads-SDK 10.9.0.
 
 ### 4.10.9.0.0
