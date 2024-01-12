@@ -1,0 +1,19 @@
+name: Automated Create Release Branch
+
+on:
+  # Automated trigger from a job running on an external repo
+  repository_dispatch:
+    types:
+      - automated-create-release-branch
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUBSERVICETOKEN }}
+
+jobs:
+  create-release-branch:
+    runs-on: macos-latest
+    steps:
+      - uses: chartboost/chartboost-mediation-ios-actions/create-adapter-release-branch@v1
+        with:
+          adapter-version: ${{ github.event.client_payload.adapter-version }}
+          partner-version: ${{ github.event.client_payload.partner-version }}
