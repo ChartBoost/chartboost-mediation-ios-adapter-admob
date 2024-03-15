@@ -6,6 +6,9 @@ Adapters are compatible with any Chartboost Mediation SDK version within that ma
 ### 4.11.2.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.2.0.
 
+### 4.11.1.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.1.0.
+
 ### 4.11.0.0.0
 - The minimum deployment target compatible with this adapter is now iOS 12
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.0.0.
