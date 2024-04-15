@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name        = 'ChartboostMediationAdapterAdMob'
-  spec.version     = '4.10.14.0.0'
+  spec.version     = '4.11.2.0.0'
   spec.license     = { :type => 'MIT', :file => 'LICENSE.md' }
   spec.homepage    = 'https://github.com/ChartBoost/chartboost-mediation-ios-adapter-admob'
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
@@ -11,6 +11,7 @@ Pod::Spec.new do |spec|
   spec.module_name  = 'ChartboostMediationAdapterAdMob'
   spec.source       = { :git => 'https://github.com/ChartBoost/chartboost-mediation-ios-adapter-admob.git', :tag => spec.version }
   spec.source_files = 'Source/**/*.{swift}'
+  spec.resource_bundles = { 'ChartboostMediationAdapterAdMob' => ['PrivacyInfo.xcprivacy'] }
 
   # Minimum supported versions
   spec.swift_version         = '5.0'
@@ -23,7 +24,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'ChartboostMediationSDK', '~> 4.0'
 
   # Partner network SDK and version that this adapter is certified to work with.
-  spec.dependency 'Google-Mobile-Ads-SDK', '~> 10.14.0'
+  spec.dependency 'Google-Mobile-Ads-SDK', '~> 11.2.0'
 
   # The partner network SDK is a static framework which requires the static_framework option.
   spec.static_framework = true
