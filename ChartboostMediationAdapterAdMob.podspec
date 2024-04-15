@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
 
   # Minimum supported versions
   spec.swift_version         = '5.0'
-  spec.ios.deployment_target = '12.0'
+  spec.ios.deployment_target = '13.0'
 
   # System frameworks used
   spec.ios.frameworks = ['Foundation', 'UIKit']
