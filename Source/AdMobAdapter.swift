@@ -30,7 +30,7 @@ final class AdMobAdapter: PartnerAdapter {
     let adapterVersion = "4.11.2.0.0"
     
     /// The partner's unique identifier.
-    let partnerIdentifier = "admob"
+    let partnerID = "admob"
     
     /// The human-friendly partner name.
     let partnerDisplayName = "AdMob"
@@ -49,7 +49,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// Does any setup needed before beginning to load ads.
     /// - parameter configuration: Configuration data for the adapter to set up.
     /// - parameter completion: Closure to be performed by the adapter when it's done setting up. It should include an error indicating the cause for failure or `nil` if the operation finished successfully.
-    func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
+    func setUp(with configuration: PartnerConfiguration, completion: @escaping (Result<PartnerDetails, Error>) -> Void) {
         log(.setUpStarted)
 
         // Disable Google mediation since Chartboost Mediation is the mediator
@@ -62,7 +62,7 @@ final class AdMobAdapter: PartnerAdapter {
             log("Redundant call to initalize GoogleMobileAds was ignored")
             // We should log either success or failure before returning, and this is more like success.
             log(.setUpSucceded)
-            completion(nil)
+            completion(.success([:]))
             return
         }
 
@@ -70,12 +70,12 @@ final class AdMobAdapter: PartnerAdapter {
             let statuses = initStatus.adapterStatusesByClassName
             if statuses[GoogleStrings.adMobClassName]?.state == .ready {
                 self.log(.setUpSucceded)
-                completion(nil)
+                completion(.success([:]))
             } else {
                 let error = self.error(.initializationFailureUnknown,
                                        description: "AdMob adapter status was \(String(describing: statuses[GoogleStrings.adMobClassName]?.state))")
                 self.log(.setUpFailed(error))
-                completion(error)
+                completion(.failure(error))
             }
         }
     }
@@ -83,9 +83,10 @@ final class AdMobAdapter: PartnerAdapter {
     /// Fetches bidding tokens needed for the partner to participate in an auction.
     /// - parameter request: Information about the ad load request.
     /// - parameter completion: Closure to be performed with the fetched info.
-    func fetchBidderInformation(request: PreBidRequest, completion: @escaping ([String: String]?) -> Void) {
+    func fetchBidderInformation(request: PartnerAdPreBidRequest, completion: @escaping (Result<[String: String], Error>) -> Void) {
         // AdMob does not use a bidding token
-        completion(nil)
+        log(.fetchBidderInfoNotSupported)
+        completion(.success([:]))
     }
     
     /// Indicates if GDPR applies or not and the user's GDPR consent status.
@@ -132,21 +133,16 @@ final class AdMobAdapter: PartnerAdapter {
     func makeAd(request: PartnerAdLoadRequest, delegate: PartnerAdDelegate) throws -> PartnerAd {
         // This partner supports multiple loads for the same partner placement.
         switch request.format {
-        case .banner:
+        case PartnerAdFormats.banner, PartnerAdFormats.adaptiveBanner:
             return AdMobAdapterBannerAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
-        case .interstitial:
+        case PartnerAdFormats.interstitial:
             return AdMobAdapterInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
-        case .rewarded:
+        case PartnerAdFormats.rewarded:
             return AdMobAdapterRewardedAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
+        case PartnerAdFormats.rewardedInterstitial:
+            return AdMobAdapterRewardedInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         default:
-            // Not using the `.rewardedInterstitial` or `.adaptiveBanner` cases directly to maintain backward compatibility with Chartboost Mediation 4.0
-            if request.format.rawValue == "rewarded_interstitial" {
-                return AdMobAdapterRewardedInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
-            } else if request.format.rawValue == "adaptive_banner" {
-                return AdMobAdapterBannerAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
-            } else {
-                throw error(.loadFailureUnsupportedAdFormat)
-            }
+            throw error(.loadFailureUnsupportedAdFormat)
         }
     }
     
