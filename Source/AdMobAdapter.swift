@@ -133,7 +133,7 @@ final class AdMobAdapter: PartnerAdapter {
     func makeAd(request: PartnerAdLoadRequest, delegate: PartnerAdDelegate) throws -> PartnerAd {
         // This partner supports multiple loads for the same partner placement.
         switch request.format {
-        case PartnerAdFormats.banner, PartnerAdFormats.adaptiveBanner:
+        case PartnerAdFormats.banner:
             return AdMobAdapterBannerAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
         case PartnerAdFormats.interstitial:
             return AdMobAdapterInterstitialAd(adapter: self, request: request, delegate: delegate, extras: sharedExtras)
