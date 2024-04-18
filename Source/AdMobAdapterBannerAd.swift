@@ -8,12 +8,10 @@ import Foundation
 import GoogleMobileAds
 
 class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerBannerAd {
-    /// The partner ad view to display inline. E.g. a banner view.
-    /// Should be nil for full-screen ads.
+    /// The partner banner ad view to display.
     var view: UIView?
 
     /// The loaded partner ad banner size.
-    /// Should be `nil` for full-screen ads.
     var size: PartnerBannerSize?
 
     /// Loads an ad.
@@ -72,7 +70,7 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         // From https://developers.google.com/admob/ios/api/reference/Functions:
         // "The exact size of the ad returned is passed through the banner’s ad size delegate and
         // is indicated by the banner’s intrinsicContentSize."
-        bannerSize = PartnerBannerSize(
+        size = PartnerBannerSize(
             size: bannerView.intrinsicContentSize,
             type: GADAdSizeIsFluid(bannerView.adSize) ? .adaptive : .fixed
         )

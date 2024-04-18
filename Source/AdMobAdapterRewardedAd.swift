@@ -7,15 +7,7 @@ import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
 
-final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
-    /// The partner ad view to display inline. E.g. a banner view.
-    /// Should be nil for full-screen ads.
-    var inlineView: UIView? { nil }
-    
-    /// The loaded partner ad banner size.
-    /// Should be `nil` for full-screen ads.
-    var bannerSize: PartnerBannerSize? { nil }
-
+final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerFullscreenAd {
     // The AdMob Ad Object
     var ad: GADRewardedAd?
     
