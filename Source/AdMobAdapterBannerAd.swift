@@ -7,14 +7,12 @@ import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
 
-class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
-    /// The partner ad view to display inline. E.g. a banner view.
-    /// Should be nil for full-screen ads.
-    var inlineView: UIView?
+class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerBannerAd {
+    /// The partner banner ad view to display.
+    var view: UIView?
 
     /// The loaded partner ad banner size.
-    /// Should be `nil` for full-screen ads.
-    var bannerSize: PartnerBannerSize?
+    var size: PartnerBannerSize?
 
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented on. Needed on load for some banners.
@@ -36,18 +34,10 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerAd {
         bannerView.isAutoloadEnabled = false
         bannerView.delegate = self
         bannerView.rootViewController = viewController
-        inlineView = bannerView
-        
+        view = bannerView
+
         let adMobRequest = generateRequest()
         bannerView.load(adMobRequest)
-    }
-    
-    /// Shows a loaded ad.
-    /// It will never get called for banner ads. You may leave the implementation blank for that ad format.
-    /// - parameter viewController: The view controller on which the ad will be presented on.
-    /// - parameter completion: Closure to be performed once the ad has been shown.
-    func show(with viewController: UIViewController, completion: @escaping (Result<PartnerDetails, Error>) -> Void) {
-        // no-op
     }
     
     private func gadAdSize(from requestedSize: BannerSize?) -> GADAdSize {
@@ -80,7 +70,7 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         // From https://developers.google.com/admob/ios/api/reference/Functions:
         // "The exact size of the ad returned is passed through the banner’s ad size delegate and
         // is indicated by the banner’s intrinsicContentSize."
-        bannerSize = PartnerBannerSize(
+        size = PartnerBannerSize(
             size: bannerView.intrinsicContentSize,
             type: GADAdSizeIsFluid(bannerView.adSize) ? .adaptive : .fixed
         )
