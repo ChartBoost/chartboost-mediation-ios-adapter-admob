@@ -55,6 +55,10 @@ final class AdMobAdapter: PartnerAdapter {
         // Disable Google mediation since Chartboost Mediation is the mediator
         GADMobileAds.sharedInstance().disableMediationInitialization()
 
+        // Apply initial consents
+        setConsents(configuration.consents, modifiedKeys: Set(configuration.consents.keys))
+        setIsUserUnderage(configuration.isUserUnderage)
+
         // Exit early if GoogleMobileAds SDK has already been initalized
         let statuses = GADMobileAds.sharedInstance().initializationStatus
         guard let status = statuses.adapterStatusesByClassName[GoogleStrings.adMobClassName],
