@@ -30,14 +30,13 @@ import os.log
     private static let log = OSLog(subsystem: "com.chartboost.mediation.adapter.admob", category: "Configuration")
 
     /// Google's identifier for your test device can be found in the console output from their SDK
-    @objc public static func setTestDeviceID(_ id: String?) {
-        if let id = id {
-            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [id]
-        } else {
-            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = []
+    @objc public static var testDeviceIdentifiers: [String]? {
+        get {
+            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers
         }
-        if #available(iOS 12.0, *) {
-            os_log(.debug, log: log, "AdMob SDK test device ID set to %{public}s", id ?? "nil")
+        set {
+            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = newValue
+            os_log(.debug, log: log, "AdMob SDK test device ID set to %{public}s", newValue ?? "nil")
         }
     }
 }
