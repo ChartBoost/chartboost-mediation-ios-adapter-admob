@@ -60,6 +60,10 @@ final class AdMobAdapter: PartnerAdapter {
         // Disable Google mediation since Chartboost Mediation is the mediator
         GADMobileAds.sharedInstance().disableMediationInitialization()
 
+        // Apply initial consents
+        setConsents(configuration.consents, modifiedKeys: Set(configuration.consents.keys))
+        setIsUserUnderage(configuration.isUserUnderage)
+
         // Exit early if GoogleMobileAds SDK has already been initalized
         let statuses = GADMobileAds.sharedInstance().initializationStatus
         guard let status = statuses.adapterStatusesByClassName[GoogleStrings.adMobClassName],
@@ -94,40 +98,59 @@ final class AdMobAdapter: PartnerAdapter {
         completion(.success([:]))
     }
     
-    /// Indicates if GDPR applies or not and the user's GDPR consent status.
-    /// - parameter applies: `true` if GDPR applies, `false` if not, `nil` if the publisher has not provided this information.
-    /// - parameter status: One of the `GDPRConsentStatus` values depending on the user's preference.
-    func setGDPR(applies: Bool?, status: GDPRConsentStatus) {
-        // The "npa" parameter is an internal AdMob feature not publicly documented, and is subject to change.
-        if applies == true && status != .granted {
-            // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
-            sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging([GoogleStrings.gdprKey:"1"], uniquingKeysWith: { (_, new) in new })
-            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: "1"))
-        } else {
-            // If GDPR doesn't apply or status is '.granted', then remove the "non-personalized ads" flag
-            sharedExtras.additionalParameters?[GoogleStrings.gdprKey] = nil
-            log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: nil))
+    /// Indicates that the user consent has changed.
+    /// - parameter consents: The new consents value, including both modified and unmodified consents.
+    /// - parameter modifiedKeys: A set containing all the keys that changed.
+    func setConsents(_ consents: [ConsentKey: ConsentValue], modifiedKeys: Set<ConsentKey>) {
+        if modifiedKeys.contains(partnerID) || modifiedKeys.contains(ConsentKeys.gdprConsentGiven) {
+            updateGPDR()
+        }
+        if modifiedKeys.contains(ConsentKeys.ccpaOptIn) {
+            updateCCPA()
+        }
+
+        func updateGPDR() {
+            // Use a partner-specific consent if available, falling back to the general GDPR consent if not
+            if (consents[partnerID] ?? consents[ConsentKeys.gdprConsentGiven]) == ConsentValues.denied {
+                // The "npa" parameter is an internal AdMob feature not publicly documented, and is subject to change.
+                // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
+                sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging([GoogleStrings.gdprKey:"1"], uniquingKeysWith: { (_, new) in new })
+                log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: "1"))
+            } else {
+                // If GDPR status is granted or the info is not provided then remove the "non-personalized ads" flag
+                sharedExtras.additionalParameters?[GoogleStrings.gdprKey] = nil
+                log(.privacyUpdated(setting: GoogleStrings.gdprKey, value: nil))
+            }
+        }
+
+        func updateCCPA() {
+            // See https://developers.google.com/admob/ios/privacy/ccpa
+            let needsRestrictedDataProcessing: Bool?
+            switch consents[ConsentKeys.ccpaOptIn] {
+            case ConsentValues.granted:
+                needsRestrictedDataProcessing = false
+            case ConsentValues.denied:
+                needsRestrictedDataProcessing = true
+            default:
+                needsRestrictedDataProcessing = nil
+            }
+            if let needsRestrictedDataProcessing {
+                UserDefaults.standard.set(needsRestrictedDataProcessing, forKey: GoogleStrings.ccpaKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: GoogleStrings.ccpaKey)
+            }
+            log(.privacyUpdated(setting: GoogleStrings.ccpaKey, value: needsRestrictedDataProcessing))
         }
     }
-    
-    /// Indicates the CCPA status both as a boolean and as an IAB US privacy string.
-    /// - parameter hasGivenConsent: A boolean indicating if the user has given consent.
-    /// - parameter privacyString: An IAB-compliant string indicating the CCPA status.
-    func setCCPA(hasGivenConsent: Bool, privacyString: String) {
-        // See https://developers.google.com/admob/ios/privacy/ccpa
-        // Invert the boolean, because "has given consent" is the opposite of "needs Restricted Data Processing"
-        log(.privacyUpdated(setting: GoogleStrings.ccpaKey, value: !hasGivenConsent))
-        UserDefaults.standard.set(!hasGivenConsent, forKey: GoogleStrings.ccpaKey)
-    }
-    
-    /// Indicates if the user is subject to COPPA or not.
-    /// - parameter isChildDirected: `true` if the user is subject to COPPA, `false` otherwise.
-    func setCOPPA(isChildDirected: Bool) {
+
+    /// Indicates that the user is underage signal has changed.
+    /// - parameter isUserUnderage: `true` if the user is underage as determined by the publisher, `false` otherwise.
+    func setIsUserUnderage(_ isUserUnderage: Bool) {
         // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration#-tagforchilddirectedtreatment:
-        log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isChildDirected))
-        GADMobileAds.sharedInstance().requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isChildDirected)
+        log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isUserUnderage))
+        GADMobileAds.sharedInstance().requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isUserUnderage)
     }
-    
+
     /// Creates a new banner ad object in charge of communicating with a single partner SDK ad instance.
     /// Chartboost Mediation SDK calls this method to create a new ad for each new load request. Ad instances are never reused.
     /// Chartboost Mediation SDK takes care of storing and disposing of ad instances so you don't need to.
