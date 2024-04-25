@@ -25,7 +25,7 @@ jobs:
   create-release-branch:
     runs-on: macos-latest
     steps:
-      - uses: chartboost/chartboost-mediation-ios-actions/create-adapter-release-branch@v1
+      - uses: chartboost/chartboost-mediation-ios-actions/create-adapter-release-branch@v2
         with:
           adapter-version: ${{ inputs.adapter-version || github.event.client_payload.adapter-version }}
           partner-version: ${{ inputs.partner-version || github.event.client_payload.partner-version }}

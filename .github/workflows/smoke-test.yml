@@ -12,6 +12,6 @@ jobs:
   validate-podspec:
     runs-on: macos-latest
     steps:
-      - uses: chartboost/chartboost-mediation-ios-actions/adapter-smoke-test@v1
+      - uses: chartboost/chartboost-mediation-ios-actions/adapter-smoke-test@v2
         with:
           allow-warnings: true
