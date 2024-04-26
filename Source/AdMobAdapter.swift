@@ -20,21 +20,26 @@ final class AdMobAdapter: PartnerAdapter {
     
     /// The version of the partner SDK.
     var partnerSDKVersion: String {
-        let versionNumber = GADMobileAds.sharedInstance().versionNumber
-        return "\(versionNumber.majorVersion).\(versionNumber.minorVersion).\(versionNumber.patchVersion)"
+        AdMobAdapterConfiguration.partnerSDKVersion
     }
     
     /// The version of the adapter.
     /// It should have either 5 or 6 digits separated by periods, where the first digit is Chartboost Mediation SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    let adapterVersion = "4.11.2.0.0"
-    
+    var adapterVersion: String {
+        AdMobAdapterConfiguration.adapterVersion
+    }
+
     /// The partner's unique identifier.
-    let partnerID = "admob"
-    
+    var partnerID: String {
+        AdMobAdapterConfiguration.partnerID
+    }
+
     /// The human-friendly partner name.
-    let partnerDisplayName = "AdMob"
-    
+    var partnerDisplayName: String {
+        AdMobAdapterConfiguration.partnerDisplayName
+    }
+
     /// Parameters that should be included in all ad requests
     let sharedExtras = GADExtras()
     
