@@ -36,7 +36,7 @@ import os.log
         }
         set {
             GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = newValue
-            os_log(.debug, log: log, "AdMob SDK test device ID set to %{public}s", newValue ?? "nil")
+            os_log(.debug, log: log, "AdMob SDK test device IDs set to %{public}s", newValue ?? "nil")
         }
     }
 }
