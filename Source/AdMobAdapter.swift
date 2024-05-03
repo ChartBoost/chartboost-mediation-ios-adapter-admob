@@ -17,28 +17,9 @@ enum GoogleStrings {
 }
 
 final class AdMobAdapter: PartnerAdapter {
-    
-    /// The version of the partner SDK.
-    var partnerSDKVersion: String {
-        AdMobAdapterConfiguration.partnerSDKVersion
-    }
-    
-    /// The version of the adapter.
-    /// It should have either 5 or 6 digits separated by periods, where the first digit is Chartboost Mediation SDK's major version, the last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
-    /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.<Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    var adapterVersion: String {
-        AdMobAdapterConfiguration.adapterVersion
-    }
-
-    /// The partner's unique identifier.
-    var partnerID: String {
-        AdMobAdapterConfiguration.partnerID
-    }
-
-    /// The human-friendly partner name.
-    var partnerDisplayName: String {
-        AdMobAdapterConfiguration.partnerDisplayName
-    }
+    /// The adapter configuration type that contains adapter and partner info.
+    /// It may also be used to expose custom partner SDK options to the publisher.
+    var configuration: PartnerAdapterConfiguration.Type { AdMobAdapterConfiguration.self }
 
     /// Parameters that should be included in all ad requests
     let sharedExtras = GADExtras()
@@ -102,7 +83,7 @@ final class AdMobAdapter: PartnerAdapter {
     /// - parameter consents: The new consents value, including both modified and unmodified consents.
     /// - parameter modifiedKeys: A set containing all the keys that changed.
     func setConsents(_ consents: [ConsentKey: ConsentValue], modifiedKeys: Set<ConsentKey>) {
-        if modifiedKeys.contains(partnerID) || modifiedKeys.contains(ConsentKeys.gdprConsentGiven) {
+        if modifiedKeys.contains(configuration.partnerID) || modifiedKeys.contains(ConsentKeys.gdprConsentGiven) {
             updateGPDR()
         }
         if modifiedKeys.contains(ConsentKeys.ccpaOptIn) {
@@ -111,7 +92,7 @@ final class AdMobAdapter: PartnerAdapter {
 
         func updateGPDR() {
             // Use a partner-specific consent if available, falling back to the general GDPR consent if not
-            if (consents[partnerID] ?? consents[ConsentKeys.gdprConsentGiven]) == ConsentValues.denied {
+            if (consents[configuration.partnerID] ?? consents[ConsentKeys.gdprConsentGiven]) == ConsentValues.denied {
                 // The "npa" parameter is an internal AdMob feature not publicly documented, and is subject to change.
                 // Set "npa" to "1" by merging with the existing extras dictionary if it's non-nil and overwriting the old value if keys collide
                 sharedExtras.additionalParameters = (sharedExtras.additionalParameters ?? [:]).merging([GoogleStrings.gdprKey:"1"], uniquingKeysWith: { (_, new) in new })
