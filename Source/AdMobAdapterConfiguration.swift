@@ -3,12 +3,12 @@
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
+import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
-import os.log
 
 /// A list of externally configurable properties pertaining to the partner SDK that can be retrieved and set by publishers.
-@objc public class AdMobAdapterConfiguration: NSObject {
+@objc public class AdMobAdapterConfiguration: NSObject, PartnerAdapterConfiguration {
 
     /// The version of the partner SDK.
     @objc public static var partnerSDKVersion: String {
@@ -27,8 +27,6 @@ import os.log
     /// The human-friendly partner name.
     @objc public static let partnerDisplayName = "AdMob"
 
-    private static let log = OSLog(subsystem: "com.chartboost.mediation.adapter.admob", category: "Configuration")
-
     /// Google's identifier for your test device can be found in the console output from their SDK
     @objc public static var testDeviceIdentifiers: [String]? {
         get {
@@ -36,7 +34,7 @@ import os.log
         }
         set {
             GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = newValue
-            os_log(.debug, log: log, "AdMob SDK test device IDs set to %{public}s", newValue?.description ?? "nil")
+            log("Test device IDs set to \(newValue?.description ?? "nil")")
         }
     }
 }
