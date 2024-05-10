@@ -32,8 +32,7 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerBannerAd {
         // Fail if we cannot fit a fixed size banner in the requested size.
         guard
             let requestedSize = request.bannerSize,
-            let fittingSize = BannerSize.largestStandardFixedSizeThatFits(in: requestedSize),
-            let gadSize = fittingSize.gadAdSize
+            let gadSize = requestedSize.gadAdSize
         else {
             let error = error(.loadFailureInvalidBannerSize)
             log(.loadFailed(error))
