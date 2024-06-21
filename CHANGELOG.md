@@ -5,6 +5,7 @@ Adapters are compatible with any Chartboost Mediation SDK version within that ma
 
 ### 4.11.6.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.6.0.
+- Xcode 15.3 and newer is now required.
 
 ### 4.11.5.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.5.0.
