@@ -12,6 +12,12 @@ jobs:
   release-adapter:
     runs-on: macos-latest
     steps:
-      - uses: chartboost/chartboost-mediation-ios-actions/release-adapter@v1
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: '15.3' # Google Mobile Ads SDK requires Xcode 15.3 starting in version 11.6.0
+
+      - name: Release adapter
+        uses: chartboost/chartboost-mediation-ios-actions/release-adapter@v1
         with:
           allow-warnings: true
