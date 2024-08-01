@@ -7,87 +7,82 @@ import ChartboostMediationSDK
 import Foundation
 import GoogleMobileAds
 
-final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerAd {
-    /// The partner ad view to display inline. E.g. a banner view.
-    /// Should be nil for full-screen ads.
-    var inlineView: UIView? { nil }
-    
+final class AdMobAdapterRewardedAd: AdMobAdapterAd, PartnerFullscreenAd {
     // The AdMob Ad Object
     var ad: GADRewardedAd?
-    
+
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented. Needed on load for some banners.
     /// - parameter completion: Closure to be performed once the ad has been loaded.
-    func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
+    func load(with viewController: UIViewController?, completion: @escaping (Error?) -> Void) {
         log(.loadStarted)
-        
+
         let adMobRequest = generateRequest()
         GADRewardedAd.load(
-            withAdUnitID:self.request.partnerPlacement,
+            withAdUnitID: self.request.partnerPlacement,
             request: adMobRequest
         ) { [weak self] ad, error in
-            guard let self = self else { return }
-            if let error = error {
+            guard let self else { return }
+            if let error {
                 self.log(.loadFailed(error))
-                completion(.failure(error))
+                completion(error)
                 return
             }
             self.ad = ad
             ad?.fullScreenContentDelegate = self
             self.log(.loadSucceeded)
-            completion(.success([:]))
+            completion(error)
         }
     }
-    
+
     /// Shows a loaded ad.
-    /// It will never get called for banner ads. You may leave the implementation blank for that ad format.
-    /// - parameter viewController: The view controller on which the ad will be presented.
+    /// Chartboost Mediation SDK will always call this method from the main thread.
+    /// - parameter viewController: The view controller on which the ad will be presented on.
     /// - parameter completion: Closure to be performed once the ad has been shown.
-    func show(with viewController: UIViewController, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
+    func show(with viewController: UIViewController, completion: @escaping (Error?) -> Void) {
         log(.showStarted)
-        
-        guard let ad = ad else {
+
+        guard let ad else {
             let error = error(.showFailureAdNotReady)
             log(.showFailed(error))
-            completion(.failure(error))
+            completion(error)
             return
         }
         showCompletion = completion
-        
+
         ad.present(fromRootViewController: viewController) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.log(.didReward)
-            self.delegate?.didReward(self, details: [:])  ?? self.log(.delegateUnavailable)
+            self.delegate?.didReward(self) ?? self.log(.delegateUnavailable)
         }
     }
 }
 
 extension AdMobAdapterRewardedAd: GADFullScreenContentDelegate {
-    
     func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
         log(.didTrackImpression)
-        delegate?.didTrackImpression(self, details: [:]) ?? log(.delegateUnavailable)
+        delegate?.didTrackImpression(self) ?? log(.delegateUnavailable)
     }
-    
+
     func adDidRecordClick(_ ad: GADFullScreenPresentingAd) {
         log(.didClick(error: nil))
-        delegate?.didClick(self, details: [:]) ?? log(.delegateUnavailable)
+        delegate?.didClick(self) ?? log(.delegateUnavailable)
     }
-    
+
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         log(.showFailed(error))
-        showCompletion?(.failure(error)) ?? log(.showResultIgnored)
+        showCompletion?(error) ?? log(.showResultIgnored)
         showCompletion = nil
     }
-    
+
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         log(.showSucceeded)
-        showCompletion?(.success([:])) ?? log(.showResultIgnored)
+        showCompletion?(nil) ?? log(.showResultIgnored)
         showCompletion = nil
     }
-    
+
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         log(.didDismiss(error: nil))
-        delegate?.didDismiss(self, details: [:], error: nil) ?? log(.delegateUnavailable)
+        delegate?.didDismiss(self, error: nil) ?? log(.delegateUnavailable)
     }
 }
