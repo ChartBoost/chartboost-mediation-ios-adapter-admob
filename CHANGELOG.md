@@ -1,7 +1,18 @@
-## Changelog
+# Changelog
 
 Note the first digit of every adapter version corresponds to the major version of the Chartboost Mediation SDK compatible with that adapter. 
 Adapters are compatible with any Chartboost Mediation SDK version within that major version.
+
+All official releases can be found on this repository's [releases page](https://github.com/ChartBoost/chartboost-mediation-ios-adapter-admob/releases).
+
+## Table of Contents
+- [Mediation 5](#mediation-5)
+- [Mediation 4](#mediation-4)
+
+## Mediation 5
+
+### 5.11.11.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.11.0.
 
 ### 5.11.10.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.10.0.
@@ -12,6 +23,9 @@ Adapters are compatible with any Chartboost Mediation SDK version within that ma
 ### 5.11.8.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.8.0.
 
+### 5.11.7.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.7.0.
+
 ### 5.11.6.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.6.0.
 - Google-Mobile-Ads-SDK 11.6.0 now depends on MarketplaceKit and requires XCode 15.3 or above.
@@ -20,6 +34,23 @@ Adapters are compatible with any Chartboost Mediation SDK version within that ma
 - The minimum deployment target compatible with this adapter is now iOS 13.
 - This version of the adapter has been certified with ChartboostMediationSDK 5.0.0.
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.5.0.
+
+## Mediation 4
+
+### 4.11.10.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.1.0.
+
+### 4.11.9.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.9.0.
+
+### 4.11.8.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.8.0.
+
+### 4.11.7.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.7.0.
+
+### 4.11.6.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.6.0.
 
 ### 4.11.5.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 11.5.0.
