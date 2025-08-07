@@ -1,4 +1,4 @@
-// Copyright 2022-2024 Chartboost, Inc.
+// Copyright 2022-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -11,7 +11,7 @@ import GoogleMobileAds
 @objc public class AdMobAdapterConfiguration: NSObject, PartnerAdapterConfiguration {
     /// The version of the partner SDK.
     @objc public static var partnerSDKVersion: String {
-        let versionNumber = GADMobileAds.sharedInstance().versionNumber
+        let versionNumber = MobileAds.shared.versionNumber
         return "\(versionNumber.majorVersion).\(versionNumber.minorVersion).\(versionNumber.patchVersion)"
     }
 
@@ -20,7 +20,7 @@ import GoogleMobileAds
     /// last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.
     /// <Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    @objc public static let adapterVersion = "5.11.13.0.0"
+    @objc public static let adapterVersion = "5.12.4.0.0"
 
     /// The partner's unique identifier.
     @objc public static let partnerID = "admob"
@@ -31,10 +31,10 @@ import GoogleMobileAds
     /// Google's identifier for your test device can be found in the console output from their SDK
     @objc public static var testDeviceIdentifiers: [String]? {
         get {
-            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers
+            MobileAds.shared.requestConfiguration.testDeviceIdentifiers
         }
         set {
-            GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = newValue
+            MobileAds.shared.requestConfiguration.testDeviceIdentifiers = newValue
             log("Test device IDs set to \(newValue?.description ?? "nil")")
         }
     }

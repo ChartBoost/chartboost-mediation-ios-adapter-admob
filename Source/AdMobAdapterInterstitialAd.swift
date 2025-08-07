@@ -1,4 +1,4 @@
-// Copyright 2022-2024 Chartboost, Inc.
+// Copyright 2022-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -9,7 +9,7 @@ import GoogleMobileAds
 
 final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerFullscreenAd {
     // The AdMob Ad Object
-    var ad: GADInterstitialAd?
+    var ad: InterstitialAd?
 
     /// Loads an ad.
     /// - parameter viewController: The view controller on which the ad will be presented. Needed on load for some banners.
@@ -18,8 +18,8 @@ final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerFullscreenAd {
         log(.loadStarted)
 
         let adMobRequest = generateRequest()
-        GADInterstitialAd.load(
-            withAdUnitID: self.request.partnerPlacement,
+        InterstitialAd.load(
+            with: self.request.partnerPlacement,
             request: adMobRequest
         ) { [weak self] ad, error in
             guard let self else { return }
@@ -50,34 +50,34 @@ final class AdMobAdapterInterstitialAd: AdMobAdapterAd, PartnerFullscreenAd {
         }
         showCompletion = completion
 
-        ad.present(fromRootViewController: viewController)
+        ad.present(from: viewController)
     }
 }
 
-extension AdMobAdapterInterstitialAd: GADFullScreenContentDelegate {
-    func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+extension AdMobAdapterInterstitialAd: FullScreenContentDelegate {
+    func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
         log(.didTrackImpression)
         delegate?.didTrackImpression(self) ?? log(.delegateUnavailable)
     }
 
-    func adDidRecordClick(_ ad: GADFullScreenPresentingAd) {
+    func adDidRecordClick(_ ad: FullScreenPresentingAd) {
         log(.didClick(error: nil))
         delegate?.didClick(self) ?? log(.delegateUnavailable)
     }
 
-    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         log(.showFailed(error))
         showCompletion?(error) ?? log(.showResultIgnored)
         showCompletion = nil
     }
 
-    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
         log(.showSucceeded)
         showCompletion?(nil) ?? log(.showResultIgnored)
         showCompletion = nil
     }
 
-    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         log(.didDismiss(error: nil))
         delegate?.didDismiss(self, error: nil) ?? log(.delegateUnavailable)
     }

@@ -1,4 +1,4 @@
-// Copyright 2022-2024 Chartboost, Inc.
+// Copyright 2022-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -22,7 +22,7 @@ final class AdMobAdapter: PartnerAdapter {
     var configuration: PartnerAdapterConfiguration.Type { AdMobAdapterConfiguration.self }
 
     /// Parameters that should be included in all ad requests
-    let sharedExtras = GADExtras()
+    let sharedExtras = Extras()
 
     /// The designated initializer for the adapter.
     /// Chartboost Mediation SDK will use this constructor to create instances of conforming types.
@@ -40,16 +40,16 @@ final class AdMobAdapter: PartnerAdapter {
         log(.setUpStarted)
 
         // Disable Google mediation since Chartboost Mediation is the mediator
-        GADMobileAds.sharedInstance().disableMediationInitialization()
+        MobileAds.shared.disableMediationInitialization()
 
         // Apply initial consents
         setConsents(configuration.consents, modifiedKeys: Set(configuration.consents.keys))
         setIsUserUnderage(configuration.isUserUnderage)
 
         // Exit early if GoogleMobileAds SDK has already been initalized
-        let statuses = GADMobileAds.sharedInstance().initializationStatus
+        let statuses = MobileAds.shared.initializationStatus
         guard let status = statuses.adapterStatusesByClassName[GoogleStrings.adMobClassName],
-                  status.state == GADAdapterInitializationState.notReady else {
+              status.state == AdapterInitializationState.notReady else {
             log("Redundant call to initalize GoogleMobileAds was ignored")
             // We should log either success or failure before returning, and this is more like success.
             log(.setUpSucceded)
@@ -57,7 +57,7 @@ final class AdMobAdapter: PartnerAdapter {
             return
         }
 
-        GADMobileAds.sharedInstance().start { initStatus in
+        MobileAds.shared.start { initStatus in
             let statuses = initStatus.adapterStatusesByClassName
             if statuses[GoogleStrings.adMobClassName]?.state == .ready {
                 self.log(.setUpSucceded)
@@ -134,7 +134,7 @@ final class AdMobAdapter: PartnerAdapter {
     func setIsUserUnderage(_ isUserUnderage: Bool) {
         // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration#-tagforchilddirectedtreatment:
         log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isUserUnderage))
-        GADMobileAds.sharedInstance().requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isUserUnderage)
+        MobileAds.shared.requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isUserUnderage)
     }
 
     /// Creates a new banner ad object in charge of communicating with a single partner SDK ad instance.
@@ -180,10 +180,12 @@ final class AdMobAdapter: PartnerAdapter {
     /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Chartboost Mediation's.
     /// If some case cannot be mapped return `nil` to let Chartboost Mediation choose a default error code.
     func mapLoadError(_ error: Error) -> ChartboostMediationError.Code? {
-        guard (error as NSError).domain == GADErrorDomain,
-              let code = GADErrorCode(rawValue: (error as NSError).code) else {
+        let nsError = error as NSError
+        guard nsError.domain == GADErrorDomain,
+              let code = RequestError.Code(rawValue: nsError.code) else {
             return nil
         }
+
         switch code {
         case .invalidRequest:
             return .loadFailureInvalidAdRequest
@@ -207,14 +209,12 @@ final class AdMobAdapter: PartnerAdapter {
             return .loadFailureUnknown
         case .invalidArgument:
             return .loadFailureUnknown
-        case .receivedInvalidResponse:
-            return .loadFailureInvalidBidResponse
-        case .mediationNoFill:
-            return .loadFailureNoFill
         case .adAlreadyUsed:
             return .loadFailureLoadInProgress
         case .applicationIdentifierMissing:
             return .loadFailureInvalidCredentials
+        case .receivedInvalidAdString:
+            return .loadFailureInvalidAdMarkup
         @unknown default:
             return nil
         }
@@ -227,8 +227,9 @@ final class AdMobAdapter: PartnerAdapter {
     /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Chartboost Mediation's.
     /// If some case cannot be mapped return `nil` to let Chartboost Mediation choose a default error code.
     func mapShowError(_ error: Error) -> ChartboostMediationError.Code? {
-        guard (error as NSError).domain == GADErrorDomain,
-              let code = GADPresentationErrorCode(rawValue: (error as NSError).code) else {
+        let nsError = error as NSError
+        guard nsError.domain == GADErrorDomain,
+              let code = PresentationError.Code(rawValue: nsError.code) else {
             return nil
         }
         switch code {

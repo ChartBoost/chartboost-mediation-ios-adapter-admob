@@ -1,4 +1,4 @@
-// Copyright 2022-2024 Chartboost, Inc.
+// Copyright 2022-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -40,7 +40,7 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerBannerAd {
             return
         }
 
-        let bannerView = GADBannerView(adSize: gadSize)
+        let bannerView = BannerView(adSize: gadSize)
         bannerView.adUnitID = request.partnerPlacement
         bannerView.isAutoloadEnabled = false
         bannerView.delegate = self
@@ -52,8 +52,8 @@ class AdMobAdapterBannerAd: AdMobAdapterAd, PartnerBannerAd {
     }
 }
 
-extension AdMobAdapterBannerAd: GADBannerViewDelegate {
-    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+extension AdMobAdapterBannerAd: BannerViewDelegate {
+    func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         log(.loadSucceeded)
 
         // From https://developers.google.com/admob/ios/api/reference/Functions:
@@ -61,40 +61,40 @@ extension AdMobAdapterBannerAd: GADBannerViewDelegate {
         // is indicated by the banner’s intrinsicContentSize."
         size = PartnerBannerSize(
             size: bannerView.intrinsicContentSize,
-            type: GADAdSizeIsFluid(bannerView.adSize) ? .adaptive : .fixed
+            type: isAdSizeFluid(size: bannerView.adSize) ? .adaptive : .fixed
         )
         loadCompletion?(nil) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 
-    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+    func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
         log(.loadFailed(error))
         loadCompletion?(error) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 
-    func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
+    func bannerViewDidRecordImpression(_ bannerView: BannerView) {
         log(.didTrackImpression)
         self.delegate?.didTrackImpression(self) ?? log(.delegateUnavailable)
     }
 
-    func bannerViewDidRecordClick(_ bannerView: GADBannerView) {
+    func bannerViewDidRecordClick(_ bannerView: BannerView) {
         self.delegate?.didClick(self) ?? log(.delegateUnavailable)
     }
 }
 
 extension BannerSize {
-    fileprivate var gadAdSize: GADAdSize? {
+    fileprivate var gadAdSize: AdSize? {
         if self.type == .adaptive {
-            return GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.size.width, self.size.height)
+            return inlineAdaptiveBanner(width: self.size.width, maxHeight: self.size.height)
         }
         switch self {
         case .standard:
-            return GADAdSizeBanner
+            return AdSizeBanner
         case .medium:
-            return GADAdSizeMediumRectangle
+            return AdSizeMediumRectangle
         case .leaderboard:
-            return GADAdSizeLeaderboard
+            return AdSizeLeaderboard
         default:
             return nil
         }

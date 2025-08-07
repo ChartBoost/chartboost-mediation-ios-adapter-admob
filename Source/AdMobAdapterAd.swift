@@ -1,4 +1,4 @@
-// Copyright 2022-2024 Chartboost, Inc.
+// Copyright 2022-2025 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -31,13 +31,13 @@ class AdMobAdapterAd: NSObject {
     var showCompletion: ((Error?) -> Void)?
 
     /// "extra" parameters that should be included in all ad requests
-    let sharedExtras: GADExtras
+    let sharedExtras: Extras
 
     init(
         adapter: PartnerAdapter,
         request: PartnerAdLoadRequest,
         delegate: PartnerAdDelegate,
-        extras: GADExtras
+        extras: Extras
     ) {
         self.adapter = adapter
         self.request = request
@@ -46,8 +46,8 @@ class AdMobAdapterAd: NSObject {
     }
 
     /// Configure the request object that will be sent to AdMob
-    func generateRequest() -> GADRequest {
-        let adMobRequest = GADRequest()
+    func generateRequest() -> Request {
+        let adMobRequest = Request()
         adMobRequest.requestAgent = "Chartboost"
 
         var parameters: [String: Any] = [:]
@@ -68,7 +68,7 @@ class AdMobAdapterAd: NSObject {
             return new
         }
 
-        let extras = GADExtras()
+        let extras = Extras()
         extras.additionalParameters = mergedParameters
         adMobRequest.register(extras)
         return adMobRequest
