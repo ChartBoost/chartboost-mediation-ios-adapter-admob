@@ -20,7 +20,7 @@ import GoogleMobileAds
     /// last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.
     /// <Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    @objc public static let adapterVersion = "5.12.6.0.0"
+    @objc public static let adapterVersion = "5.12.7.0.0"
 
     /// The partner's unique identifier.
     @objc public static let partnerID = "admob"
