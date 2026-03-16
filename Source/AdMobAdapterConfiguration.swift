@@ -1,4 +1,4 @@
-// Copyright 2022-2025 Chartboost, Inc.
+// Copyright 2022-2026 Chartboost, Inc.
 //
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
@@ -20,7 +20,7 @@ import GoogleMobileAds
     /// last digit is the adapter's build version, and intermediate digits are the partner SDK's version.
     /// Format: `<Chartboost Mediation major version>.<Partner major version>.<Partner minor version>.<Partner patch version>.
     /// <Partner build version>.<Adapter build version>` where `.<Partner build version>` is optional.
-    @objc public static let adapterVersion = "5.12.14.0.0"
+    @objc public static let adapterVersion = "5.13.0.0.0"
 
     /// The partner's unique identifier.
     @objc public static let partnerID = "admob"

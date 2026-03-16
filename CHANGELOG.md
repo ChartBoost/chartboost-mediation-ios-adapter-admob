@@ -11,6 +11,10 @@ All official releases can be found on this repository's [releases page](https://
 
 ## Mediation 5
 
+### 5.13.0.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 13.0.0.
+- Removed logic that supported hybrid setups due to Google's removal of loading APIs that take in a request instance.
+
 ### 5.12.14.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 12.14.0.
 
