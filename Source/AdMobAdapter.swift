@@ -132,9 +132,10 @@ final class AdMobAdapter: PartnerAdapter {
     /// Indicates that the user is underage signal has changed.
     /// - parameter isUserUnderage: `true` if the user is underage as determined by the publisher, `false` otherwise.
     func setIsUserUnderage(_ isUserUnderage: Bool) {
-        // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration#-tagforchilddirectedtreatment:
-        log(.privacyUpdated(setting: "ChildDirectedTreatment", value: isUserUnderage))
-        MobileAds.shared.requestConfiguration.tagForChildDirectedTreatment = NSNumber(booleanLiteral: isUserUnderage)
+        // See https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration
+        let treatment: AgeRestrictedTreatment = isUserUnderage ? .child : .unspecified
+        log(.privacyUpdated(setting: "ageRestrictedTreatment", value: treatment))
+        MobileAds.shared.requestConfiguration.ageRestrictedTreatment = treatment
     }
 
     /// Creates a new banner ad object in charge of communicating with a single partner SDK ad instance.

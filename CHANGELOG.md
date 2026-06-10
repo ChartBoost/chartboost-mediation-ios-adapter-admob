@@ -11,6 +11,10 @@ All official releases can be found on this repository's [releases page](https://
 
 ## Mediation 5
 
+### 5.13.3.0.0
+- This version of the adapter has been certified with Google-Mobile-Ads-SDK 13.3.0.
+- Updated to use `ageRestrictedTreatment` property instead of deprecated `tagForChildDirectedTreatment`.
+
 ### 5.13.2.0.0
 - This version of the adapter has been certified with Google-Mobile-Ads-SDK 13.2.0.
 
